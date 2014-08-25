@@ -48,14 +48,9 @@
     div: op('/'),
     mod: op('%'),
     cmod: w2('((x%y)+y)%y'),
-
-    flip: curry(function(f, x, y) {
-      return f(y, x);
-    }),
-
-    compose: curry(function(f, g, x) {
-      return f(g(x));
-    }),
+    and: op('&&'),
+    or: op('||'),
+    eq: op('==='),
 
     map: 2,
     filter: 2,
@@ -64,6 +59,13 @@
     find: 2,
     findIndex: 2,
     zipObject: 2,
+
+    push: w2('y.concat([x])'),
+    attr: w2('y[x]'),
+    zero: w1('!!x'),
+    not: w1('!x'),
+
+    curry: curry,
 
     wrap: curry(function(attr, value) {
       var obj = {};
@@ -83,13 +85,13 @@
       }
     },
 
-    push: w2('y.concat([x])'),
+    flip: curry(function(f, x, y) {
+      return f(y, x);
+    }),
 
-    attr: w2('y[x]'),
-
-    zero: w1('!!x'),
-
-    curry: curry
+    compose: curry(function(f, g, x) {
+      return f(g(x));
+    })
   };
 
   for (var method in ku) {
