@@ -1,0 +1,10 @@
+{
+  "name": "ku",
+  "version": "0.0.1",
+  "main": "ku.js",
+  "ignore": [
+    "*.md",
+    "package.json",
+    "component.json"
+  ]
+}
