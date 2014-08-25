@@ -1,0 +1,8 @@
+{
+  "name": "ku",
+  "version": "0.0.1",
+  "description": "A lightweight functional programming utility suite inspired by wu.js",
+  "dependencies": {
+    "underscore": "~1.6.0"
+  }
+}
