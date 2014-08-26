@@ -54,7 +54,17 @@
     return curry(new Function('x,y', 'return ' + exp), 2);
   };
 
-  var ku = {
+  var ku = _.extend(function() { // ku compose function
+    var args = Array.prototype.slice(arguments, 0);
+
+    return function(val) {
+      for (var i = args.length - 1; i + 1; i--) {
+        val = args[i](val);
+      }
+
+      return val;
+    };
+  }, {
     add: op('+'),
     sub: op('-'),
     mul: op('*'),
@@ -114,7 +124,7 @@
         return obj[attr] && obj[attr].apply(null, args)
       };
     }
-  };
+  });
 
   for (var method in ku) {
     if (ku[method] === 1) {
