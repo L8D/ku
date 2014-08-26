@@ -4,8 +4,5 @@
   "repo": "L8D/ku",
   "license": "MIT",
   "main": "ku.js",
-  "description": "A lightweight functional programming utility suite inspired by wu.js",
-  "dependencies": {
-    "underscore": "~1.6.0"
-  }
+  "description": "A lightweight functional programming utility suite inspired by wu.js"
 }
