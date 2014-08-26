@@ -105,7 +105,15 @@
 
     compose: curry(function(f, g, x) {
       return f(g(x));
-    })
+    }),
+
+    method: function(attr) {
+      var args = Array.prototype.slice(arguments, 1);
+
+      return function(obj) {
+        return obj[attr] && obj[attr].apply(null, args)
+      };
+    }
   };
 
   for (var method in ku) {
