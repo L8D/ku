@@ -13,9 +13,10 @@
   'use strict';
   var curry = function(fn, expected) {
     if (expected == null) expected = fn.length;
-    var args = Array.prototype.slice.call(arguments, 0);
 
     return function f() {
+      var args = Array.prototype.slice.call(arguments, 0);
+
       if (args.length > expected) {
         var extra = args.splice(expected, args.length - expected),
             r = fn.apply(null, args);
