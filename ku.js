@@ -43,7 +43,7 @@
   };
 
   var op = function(op) {
-    return curry(new Function('x,y', 'return x' + op +'y'), 2);
+    return curry(new Function('x,y', 'return x' + op + 'y'), 2);
   };
 
   var w1 = function(exp) {
