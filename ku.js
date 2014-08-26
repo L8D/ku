@@ -59,6 +59,7 @@
     find: 2,
     findIndex: 2,
     zipObject: 2,
+    pluck: 2,
 
     push: w2('y.concat([x])'),
     attr: w2('y[x]'),
