@@ -13,13 +13,25 @@
   'use strict';
   var curry = function(fn, expected) {
     if (expected == null) expected = fn.length;
+    var args = Array.prototype.slice.call(arguments, 0);
 
     return function f() {
-      if (arguments.length >= expected) {
-        return fn.apply(this, arguments);
-      } else {
-        var args = Array.prototype.slice.call(arguments, 0);
+      if (args.length > expected) {
+        var extra = args.splice(expected, args.length - expected),
+            r = f.apply(null, args);
 
+        if (typeof r === 'function') {
+          if (r.length === 0) {
+            return r.apply(extra);
+          } else {
+            return curry(r).apply(extra);
+          }
+        } else {
+          return r;
+        }
+      } else if (args.length === expected) {
+        return fn.apply(this, args);
+      } else {
         return function() {
           return f.apply(null, args.concat(
             Array.prototype.slice.call(arguments, 0)
