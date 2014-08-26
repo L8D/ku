@@ -18,7 +18,7 @@
     return function f() {
       if (args.length > expected) {
         var extra = args.splice(expected, args.length - expected),
-            r = f.apply(null, args);
+            r = fn.apply(null, args);
 
         if (typeof r === 'function') {
           if (r.length === 0) {
