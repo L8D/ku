@@ -55,7 +55,7 @@
   };
 
   var ku = _.extend(function() { // ku compose function
-    var args = Array.prototype.slice(arguments, 0);
+    var args = Array.prototype.slice.call(arguments, 0);
 
     return function(val) {
       for (var i = args.length - 1; i + 1; i--) {
