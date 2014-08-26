@@ -121,7 +121,7 @@
       var args = Array.prototype.slice(arguments, 1);
 
       return function(obj) {
-        return obj[attr] && obj[attr].apply(null, args)
+        return obj[attr] && obj[attr].apply(null, args);
       };
     }
   });
