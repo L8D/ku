@@ -1,15 +1,14 @@
 (function(root, ku) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore'], function(_) {
-      return ku(root, _);
+    define(function() {
+      return ku(root);
     });
   } else if (typeof module !== 'undefined' && module.exports) {
-    var _ = require('underscore');
-    exports = module.exports = ku(root, _);
+    exports = module.exports = ku(root);
   } else {
-    root.ku = ku(root, _);
+    root.ku = ku(root);
   }
-})(this, function(root, _) {
+})(this, function(root) {
   'use strict';
   var curry = function(fn, expected) {
     if (expected == null) expected = fn.length;
@@ -46,15 +45,7 @@
     return curry(new Function('x,y', 'return x' + op + 'y'), 2);
   };
 
-  var w1 = function(exp) {
-    return new Function('x', 'return ' + exp);
-  };
-
-  var w2 = function(exp) {
-    return curry(new Function('x,y', 'return ' + exp), 2);
-  };
-
-  var ku = _.extend(function() { // ku compose function
+  var ku = function() { // ku compose function
     var args = Array.prototype.slice.call(arguments, 0);
 
     return function(val) {
@@ -64,50 +55,128 @@
 
       return val;
     };
-  }, {
+  };
+
+  var methods = {
     add: op('+'),
     sub: op('-'),
     mul: op('*'),
     div: op('/'),
     mod: op('%'),
-    cmod: w2('((x%y)+y)%y'),
+    cmod: function(x, y) { return ((x%y)+y)%y; },
     and: op('&&'),
     or: op('||'),
     eq: op('==='),
 
-    map: 2,
-    filter: 2,
-    zip: 1,
-    initial: 1,
-    find: 2,
-    findIndex: 2,
-    zipObject: 2,
-    pluck: 2,
+    max: function(values) {
+      return Math.max.apply(null, values);
+    },
 
-    push: w2('y.concat([x])'),
-    attr: w2('y[x]'),
-    zero: w1('!!x'),
-    not: w1('!x'),
+    min: function(values) {
+      return Math.min.apply(null, values);
+    },
+
+    pluck: curry(function(attr, values) {
+      return ku.map(ku.attr(attr), values);
+    }),
+
+    push: curry(function(value, values) {
+      return values.concat([value]);
+    }),
+
+    attr: curry(function(attr, values) {
+      return values[attr];
+    }),
+
+    zero: function(value) {
+      return !!value;
+    },
+
+    not: function(value) {
+      return !value;
+    },
 
     curry: curry,
+
+    findI: curry(function(iterator, values) {
+      for (var i = 0; i < values.length; i++) {
+        if (iterator(values[i])) return i;
+      }
+    }),
+
+    find: curry(function(iterator, values) {
+      return values[ku.findI(iterator, values)];
+    }),
+
+    take: curry(function(amount, values) {
+      return values.slice(0, amount);
+    }),
+
+    drop: curry(function(amount, values) {
+      return values.slice(values.length - amount);
+    }),
+
+    head: function(values) {
+      return values[0];
+    },
+
+    tail: function(values) {
+      return values.slice(1);
+    },
+
+    init: function(values) {
+      return values.slice(0, values.length - 1);
+    },
+
+    zip: function(values) {
+      var length = ku.max(ku.pluck('length', values)),
+          result = [];
+
+      for (var i = 0; i < length; i++) {
+        result[i] = ku.pluck(i, values);
+      }
+
+      return result;
+    },
+
+    compo: curry(function(props, obj) {
+      return true; // TODO
+    }),
+
+    func: function(iterator) {
+      var type = typeof iterator;
+      if (type === 'function') {
+        return iterator;
+      } else if (s === 'string' || s === 'number') {
+        return ku.attr(iterator);
+      } else if (s === 'object') {
+        return ku.compo(iterator);
+      }
+    },
+
+    map: curry(function(iterator, values) {
+      return values.map(ku.func(iterator));
+    }),
+
+    filter: curry(function(iterator, values) {
+      return values.filter(ku.func(iterator));
+    }),
+
+    zipObject: curry(function(keys, values) {
+      var obj = {};
+
+      for (var i = 0; i < keys.length; i++) {
+        obj[keys] = values[i];
+      }
+
+      return obj;
+    }),
 
     wrap: curry(function(attr, value) {
       var obj = {};
       obj[attr] = value;
       return obj;
     }),
-
-    _: function(method) {
-      method = _[method];
-
-      if (typeof method === 'function') {
-        if (method.length === 2) {
-          return ku.compose(ku.flip, ku.curry)(method);
-        } else {
-          return method;
-        }
-      }
-    },
 
     flip: curry(function(f, x, y) {
       return f(y, x);
@@ -124,14 +193,10 @@
         return obj[attr] && obj[attr].apply(null, args);
       };
     }
-  });
+  };
 
-  for (var method in ku) {
-    if (ku[method] === 1) {
-      ku[method] = w1('_.' + method + '(x)');
-    } else if(ku[method] === 2) {
-      ku[method] = w2('_.' + method + '(y,x)');
-    }
+  for (var method in methods) {
+    ku[method] = methods[method];
   }
 
   return ku;
