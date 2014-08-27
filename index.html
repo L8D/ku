@@ -1,0 +1,47 @@
+---
+---
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ site.title }}</title>
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+  <div class="left">
+    <ul>
+      {% for p in site.categories.arithmetic %}
+      <li>
+        <code>
+        <a href="#ku-{{ p.title | slugify }}">ku.<span>{{ p.title }}</span></a>
+        </code>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="right">
+    <h1 id="title">ku</h1>
+    <small>
+      A lightweight functional programming utility suite inspired by wu.js and
+      Underscore.
+    </small>
+
+    <h1>Arithmetic</h1>
+
+    {% for p in site.categories.arithmetic %}
+    <section id="ku-{{ p.title | slugify }}">
+      <h2>
+        <code>
+          ku.{{ p.title }} <span>:: {{ p.type }}</span>
+        </code>
+      </h2>
+{{ p.content }}
+    </section>
+    {% endfor %}
+  </div>
+</body>
+</html>
