@@ -11,7 +11,7 @@
 })(this, function(root) {
   'use strict';
   var curry = function(func, expected) {
-    if (expected == null) expected = fn.length;
+    if (expected == null) expected = func.length;
 
     return function carrier() {
       var args = Array.prototype.slice.call(arguments, 0);
