@@ -199,5 +199,7 @@
     ku[method] = methods[method];
   }
 
+  ku.addf = ku.flip(ku.add);
+
   return ku;
 });
