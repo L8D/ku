@@ -10,6 +10,7 @@
   }
 })(this, function(root) {
   'use strict';
+
   var curry = function(func, expected) {
     if (expected == null) expected = func.length;
 
