@@ -10,30 +10,30 @@
   }
 })(this, function(root) {
   'use strict';
-  var curry = function(fn, expected) {
+  var curry = function(func, expected) {
     if (expected == null) expected = fn.length;
 
-    return function f() {
+    return function carrier() {
       var args = Array.prototype.slice.call(arguments, 0);
 
       if (args.length > expected) {
         var extra = args.splice(expected, args.length - expected),
-            r = fn.apply(null, args);
+            result = func.apply(null, args);
 
-        if (typeof r === 'function') {
-          if (r.length === 0) {
-            return r.apply(extra);
+        if (typeof result === 'function') {
+          if (result.length === 0) {
+            return result.apply(extra);
           } else {
-            return curry(r).apply(extra);
+            return curry(result).apply(extra);
           }
         } else {
-          return r;
+          return result;
         }
       } else if (args.length === expected) {
-        return fn.apply(this, args);
+        return func.apply(this, args);
       } else {
         return function() {
-          return f.apply(null, args.concat(
+          return carrier.apply(null, args.concat(
             Array.prototype.slice.call(arguments, 0)
           ));
         };
@@ -48,12 +48,12 @@
   var ku = function() { // ku compose function
     var args = Array.prototype.slice.call(arguments, 0);
 
-    return function(val) {
-      for (var i = args.length - 1; i + 1; i--) {
-        val = args[i](val);
+    return function(value) {
+      for (var index = args.length - 1; index + 1; index--) {
+        value = args[index](value);
       }
 
-      return val;
+      return value;
     };
   };
 
@@ -63,7 +63,7 @@
     mul: op('*'),
     div: op('/'),
     mod: op('%'),
-    cmod: function(x, y) { return ((x%y)+y)%y; },
+    cmod: function(x, y) { return ((x % y) + y) % y; },
     and: op('&&'),
     or: op('||'),
     eq: op('==='),
@@ -99,8 +99,8 @@
     curry: curry,
 
     findI: curry(function(iterator, values) {
-      for (var i = 0; i < values.length; i++) {
-        if (iterator(values[i])) return i;
+      for (var index = 0; index < values.length; index++) {
+        if (iterator(values[index])) return index;
       }
     }),
 
@@ -132,24 +132,25 @@
       var length = ku.max(ku.pluck('length', values)),
           result = [];
 
-      for (var i = 0; i < length; i++) {
-        result[i] = ku.pluck(i, values);
+      for (var index = 0; index < length; index++) {
+        result[index] = ku.pluck(index, values);
       }
 
       return result;
     },
 
-    compo: curry(function(props, obj) {
+    compo: curry(function(props, object) {
       return true; // TODO
     }),
 
     func: function(iterator) {
       var type = typeof iterator;
+
       if (type === 'function') {
         return iterator;
-      } else if (s === 'string' || s === 'number') {
+      } else if (type === 'string' || type === 'number') {
         return ku.attr(iterator);
-      } else if (s === 'object') {
+      } else if (type === 'object') {
         return ku.compo(iterator);
       }
     },
@@ -163,19 +164,19 @@
     }),
 
     zipObject: curry(function(keys, values) {
-      var obj = {};
+      var object = {};
 
-      for (var i = 0; i < keys.length; i++) {
-        obj[keys] = values[i];
+      for (var index = 0; index < keys.length; index++) {
+        object[keys[index]] = values[index];
       }
 
-      return obj;
+      return object;
     }),
 
     wrap: curry(function(attr, value) {
-      var obj = {};
-      obj[attr] = value;
-      return obj;
+      var object = {};
+      object[attr] = value;
+      return object;
     }),
 
     flip: curry(function(f, x, y) {
@@ -189,8 +190,8 @@
     method: function(attr) {
       var args = Array.prototype.slice(arguments, 1);
 
-      return function(obj) {
-        return obj[attr] && obj[attr].apply(null, args);
+      return function(object) {
+        return object[attr] && object[attr].apply(null, args);
       };
     }
   };
