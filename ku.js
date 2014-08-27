@@ -11,7 +11,54 @@
 })(this, function(root) {
   'use strict';
 
-  var curry = function(func, expected) {
+  /**
+   * Similar to {@link ku.compose} but is not curried so it will perform a
+   * one-time composition stream and return a function to apply it's argument
+   * to the stream.
+   *
+   * @exports ku
+   * @param {...function} func - Right-to-left functions to be composed
+   * @returns {function}
+   */
+  var ku = function(func) {
+    var args = Array.prototype.slice.call(arguments, 0);
+
+    return function(value) {
+      for (var index = args.length - 1; index + 1; index--) {
+        value = args[index](value);
+      }
+
+      return value;
+    };
+  };
+
+  /**
+   * A notation for an iterator function used in methods like `find`, `filter`,
+   * `map` etc.
+   *
+   * @see ku.func
+   * @typedef {(function|string|object)} iterator
+   */
+
+  /**
+   * Creates a wrapper function that performs automatic curry (keep returning
+   * collector functions until it has collected enough arguments to call the
+   * original function).
+   *
+   * On a more technical level, Takes a function and returns a carrier function
+   * that will keep returning itself (the function) until it has recieved a
+   * number of arguments greater than or equal to the original function's arity.
+   *
+   * When it has "collected" enough arguments it will apply those arguments to
+   * the original function and then either return the result, or if the result
+   * is a function and there are extra aguments, it will apply the extra
+   * arguments to the result and return that.
+   *
+   * @param {function} func - Function to be transformed
+   * @param {number} [expected=func.length] - Arity of the func
+   * @returns {function}
+   */
+  ku.curry = function(func, expected) {
     if (expected == null) expected = func.length;
 
     return function carrier() {
@@ -42,166 +89,575 @@
     };
   };
 
-  var op = function(op) {
-    return curry(new Function('x,y', 'return y' + op + 'x'), 2);
+  /**
+   * Takes two values and returns their sum in the form of `y + x`.
+   *
+   * @example
+   * ku.map(ku.add('.json'), ['package', 'component', 'bower']);
+   * // => ['package.json', 'component.json', 'bower.json']
+   * @see addf
+   * @param {number|string} x
+   * @param {number|string} y
+   * @returns {number|string}
+   */
+  ku.add = function(x, y) {
+    return y + x;
   };
 
-  var ku = function() { // ku compose function
-    var args = Array.prototype.slice.call(arguments, 0);
+  ku.add = ku.curry(ku.add);
 
-    return function(value) {
-      for (var index = args.length - 1; index + 1; index--) {
-        value = args[index](value);
-      }
+  /**
+   * Reversed version of {@link ku.add} for doing more efficient string
+   * concatenation.
+   *
+   * @example
+   * var addWWW = ku.addf('www.');
+   *
+   * addWWW('google.com'); // => 'www.google.com'
+   * @param {number} x
+   * @param {number} y
+   * @returns {number}
+   */
 
-      return value;
-    };
+  ku.addf = function(x, y) {
+    return x + y;
   };
 
-  var methods = {
-    add: op('+'),
-    sub: op('-'),
-    mul: op('*'),
-    div: op('/'),
-    mod: op('%'),
-    cmod: function(x, y) { return ((x % y) + y) % y; },
-    and: op('&&'),
-    or: op('||'),
-    eq: op('==='),
+  ku.addf = ku.curry(ku.addf);
 
-    max: function(values) {
-      return Math.max.apply(null, values);
-    },
+  /**
+   * Takes two numbers and returns their difference in the form of `y - x`.
+   *
+   * @param {number} x
+   * @param {number} y
+   * @returns {number}
+   */
+  ku.sub = function(x, y) {
+    return y - x;
+  };
 
-    min: function(values) {
-      return Math.min.apply(null, values);
-    },
+  ku.sub = ku.curry(ku.sub);
 
-    pluck: curry(function(attr, values) {
-      return ku.map(ku.attr(attr), values);
-    }),
+  /**
+   * Takes two numbers and returns their product in the form of `y * x`.
+   *
+   * @param {number} x
+   * @param {number} y
+   * @returns {number}
+   */
+  ku.mul = function(x, y) {
+    return y * x;
+  };
 
-    push: curry(function(value, values) {
-      return values.concat([value]);
-    }),
+  ku.mul = ku.curry(ku.mul);
 
-    attr: curry(function(attr, values) {
-      return values[attr];
-    }),
+  /**
+   * Takes two numbers and return their quotient in the form of `y / x`.
+   *
+   * @param {number} x
+   * @param {number} y
+   * @returns {number}
+   */
+  ku.div = function(x, y) {
+    return y / x;
+  };
 
-    zero: function(value) {
-      return !!value;
-    },
+  ku.div = ku.curry(ku.div);
 
-    not: function(value) {
-      return !value;
-    },
+  /**
+   * Takes two numbers and returns the remainder in the form of `x % y`.
+   *
+   * @param {number} x
+   * @param {number} y
+   * @returns {number}
+   */
+  ku.mod = function(x, y) {
+    return x % y;
+  };
 
-    curry: curry,
+  ku.mod = ku.curry(ku.mod);
 
-    findI: curry(function(iterator, values) {
-      for (var index = 0; index < values.length; index++) {
-        if (iterator(values[index])) return index;
-      }
-    }),
+  /**
+   * Same as {@link ku.mod} but return accurate modulo operation
+   * in the form of `((x % y) + y) % y` to support operation on negative
+   * numbers
+   *
+   * @param {number} x
+   * @param {number} y
+   * @returns {number}
+   */
+  ku.cmod = function(x, y) {
+    return ((x % y) + y) % y;
+  };
 
-    find: curry(function(iterator, values) {
-      return values[ku.findI(iterator, values)];
-    }),
+  ku.cmod = ku.curry(ku.cmod);
 
-    take: curry(function(amount, values) {
-      return values.slice(0, amount);
-    }),
+  /**
+   * Takes two values then performs an AND comparison in the form of `y && x`.
+   *
+   * Note that you can use this as a null-value catcher in a similar vein
+   * of Haskell's `Maybe` monad, but more primitive since this is a static
+   * mapping.
+   *
+   * @example
+   * var toBool = ku.and(true);
+   * toBool(undefined); // => undefined
+   * toBool(9000); // => true
+   * @see ku.or
+   * @param {*} x
+   * @param {*} y
+   * @returns {*}
+   */
+  ku.and = function(x, y) {
+    return y && x;
+  };
 
-    drop: curry(function(amount, values) {
-      return values.slice(values.length - amount);
-    }),
+  ku.and = ku.curry(ku.and);
 
-    head: function(values) {
-      return values[0];
-    },
+  /**
+   * Takes two values and performs and OR comparison in the form of `y || x`.
+   *
+   * Note that you can use this as a default-value catcher in a similar vein
+   * of Haskell's `Either` monad.
+   *
+   * @example
+   * // #fff is default color
+   * var getColors = ku(ku.map(ku.or('#fff')), ku.pluck('color'));
+   *
+   * getColors([{color: '#000'}, {}, {color: '#00f'}, {color: '#f00'}, {}]);
+   * // => ['#000', '#fff', '#00f', '#f00', '#fff']
+   * @see ku.and
+   * @param {*} x
+   * @param {*} y
+   * @returns {*}
+   */
+  ku.or = function(x, y) {
+    return y || x;
+  };
 
-    tail: function(values) {
-      return values.slice(1);
-    },
+  ku.or = ku.curry(ku.or);
 
-    init: function(values) {
-      return values.slice(0, values.length - 1);
-    },
+  /**
+   * Takes two values and performs a static JavaScript comparison in the form
+   * of `y === x`.
+   *
+   * @param {*} x
+   * @param {*} y
+   * @returns {*}
+   */
+  ku.eq = function(x, y) {
+    return y === x;
+  };
 
-    zip: function(values) {
-      var length = ku.max(ku.pluck('length', values)),
-          result = [];
+  ku.eq = ku.curry(ku.eq);
 
-      for (var index = 0; index < length; index++) {
-        result[index] = ku.pluck(index, values);
-      }
+  /**
+   * Takes an array of numbers and returns the highest value according to
+   * `Math.max`.
+   *
+   * @param {number[]} numbers
+   * @returns {number}
+   */
+  ku.max = function(numbers) {
+    return Math.max.apply(null, numbers);
+  },
 
-      return result;
-    },
+  /**
+   * Takes an array of numbers and returns the lowest value according to
+   * `Math.min`.
+   *
+   * @param {number[]} numbers
+   * @returns {number}
+   */
+  ku.min = function(numbers) {
+    return Math.min.apply(null, numbers);
+  },
 
-    compo: curry(function(props, object) {
-      return true; // TODO
-    }),
+  /**
+   * Takes an attribute and array of values, then maps over each value and
+   * returns the value of that value's attribute. This is the same as
+   * `ku(ku.map, ku.attr)`.
+   *
+   * @example
+   * var getUsernames = ku.pluck('username');
+   * getUsernames([
+   *   {username: 'L8D', password: 'somepassword', id: 123},
+   *   {username: 'D8I', password: 'otherpassword', id: 234},
+   *   {username: 'tj', password: 'whoknows', id: 345}
+   * ]);
+   * // => ['L8D', 'D8I', 'tj']
+   * @param {string} attr
+   * @param {object[]} values
+   * @returns {array}
+   */
+  ku.pluck = function(attr, values) {
+    return ku.map(ku.attr(attr), values);
+  };
 
-    func: function(iterator) {
-      var type = typeof iterator;
+  ku.pluck = ku.curry(ku.pluck);
 
-      if (type === 'function') {
-        return iterator;
-      } else if (type === 'string' || type === 'number') {
-        return ku.attr(iterator);
-      } else if (type === 'object') {
-        return ku.compo(iterator);
-      }
-    },
+  /**
+   * Takes a single value and an array of values and returns a concatened
+   * array of values with the first value pushed to the end.
+   *
+   * @example
+   * someEventStream.map(ku.push(Bacon.noMore));
+   * @param {*} value
+   * @param {array} values
+   * @returns {array}
+   */
+  ku.push = function(value, values) {
+    return values.concat([value]);
+  };
 
-    map: curry(function(iterator, values) {
-      return values.map(ku.func(iterator));
-    }),
+  ku.push = ku.curry(ku.push);
 
-    filter: curry(function(iterator, values) {
-      return values.filter(ku.func(iterator));
-    }),
+  /**
+   * Takes an attribute name and an object and returns that attribute of the
+   * object.
+   *
+   * @example
+   * var getBanlist = ku(ku.map(ku.attr('username'),
+   *                     ku.filter(ku.attr('banned'));
+   *
+   * getBanlist([
+   *   {username: 'L8D', banned: false, id: 123},
+   *   {username: 'D8I', banned: true, id: 234},
+   *   {username: 'tj', banned: true, id: 345}
+   * ]);
+   * // => ['D8I', 'tj']
+   * @param {string} attr
+   * @param {object} value
+   * @returns {*}
+   */
+  ku.attr = function(attr, value) {
+    return value[attr];
+  };
 
-    zipObject: curry(function(keys, values) {
-      var object = {};
+  ku.attr = ku.curry(ku.attr);
 
-      for (var index = 0; index < keys.length; index++) {
-        object[keys[index]] = values[index];
-      }
+  /**
+   * Takes any value and returns a boolean of the double-negated value.
+   *
+   * @example
+   * // filter out events that have no items in their array
+   * someEventStream.filter(ku(ku.zero, ku.attr('length')))
+   *   .map(template)
+   *   .assign($('#some-element'), 'html');
+   * @param {*} value
+   * @returns {boolean}
+   */
+  ku.zero = function(value) {
+    return !!value;
+  },
 
-      return object;
-    }),
+  /**
+   * Takes any value and returns a boolean of the negated value.
+   *
+   * @example
+   * ku.not(true) // => false
+   * @param {*} value
+   * @returns {boolean}
+   */
+  ku.not = function(value) {
+    return !value;
+  },
 
-    wrap: curry(function(attr, value) {
-      var object = {};
-      object[attr] = value;
-      return object;
-    }),
+  /**
+   * Takes an iterator and an array of values, then iterates over each element
+   * in that array until the iterator returns a truthy value, then returns
+   * that element.
+   *
+   * @param {iterator} iterator
+   * @param {array} values
+   * @returns {*}
+   */
+  ku.find = function(iterator, values) {
+    return values[ku.findI(iterator, values)];
+  };
 
-    flip: curry(function(f, x, y) {
-      return f(y, x);
-    }),
+  ku.find = ku.curry(ku.find);
 
-    compose: curry(function(f, g, x) {
-      return f(g(x));
-    }),
-
-    method: function(attr) {
-      var args = Array.prototype.slice(arguments, 1);
-
-      return function(object) {
-        return object[attr] && object[attr].apply(null, args);
-      };
+  /**
+   * Same as {@link ku.find} except it returns the index of the element
+   * instead of the element itself.
+   *
+   * @param {iterator} iterator
+   * @param {array} values
+   * @returns {number}
+   */
+  ku.findI = function(iterator, values) {
+    for (var index = 0; index < values.length; index++) {
+      if (iterator(values[index])) return index;
     }
   };
 
-  for (var method in methods) {
-    ku[method] = methods[method];
-  }
+  ku.findI = ku.curry(ku.findI);
 
-  ku.addf = ku.flip(ku.add);
+  /**
+   * Takes an amount, _n_, and an array of values then returns the first _n_
+   * elements of those values.
+   *
+   * @example
+   * ku.take(5, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+   * // => [1, 2, 3, 4, 5]
+   * @param {number} amount
+   * @param {array} values
+   * @returns {array}
+   */
+  ku.take = function(amount, values) {
+    return values.slice(0, amount);
+  };
+
+  ku.take = ku.curry(ku.take);
+
+  /**
+   * Takes an amount, _n_, and an array of values then returns that array
+   * except for its last _n_ values.
+   *
+   * @param {number} amount
+   * @param {array} values
+   * @returns {array}
+   */
+  ku.drop = function(amount, values) {
+    return values.slice(values.length - amount);
+  };
+
+  ku.drop = ku.curry(ku.drop);
+
+  /**
+   * Takes an array of values and returns the first element of that array.
+   * Same as `ku.take(1)` or `ku.attr(0)`.
+   *
+   * @param {array} values
+   * @returns {*}
+   */
+  ku.head = function(values) {
+    return values[0];
+  },
+
+  /**
+   * Takes an array of values and returns that array except for the first
+   * element. Same as `ku.method('slice', 1)`
+   *
+   * @param {array}
+   * @return {array}
+   */
+  ku.tail = function(values) {
+    return values.slice(1);
+  },
+
+  /**
+   * Takes an array of values and returns that array except for the last
+   * element.
+   *
+   * @param {array}
+   * @return {array}
+   */
+  ku.init = function(values) {
+    return values.slice(0, values.length - 1);
+  },
+
+  /**
+   * Takes an array of arrays and returns an array of grouped elements of
+   * which contains the first elements of the given arrays, the second of
+   * which contains the second elements of the given arrays, and so on.
+   *
+   * Note that this same function can be used to unzip zipped arrays also.
+   *
+   * @example
+   * var a = ku.zip([['fred', 'barney'], [30, 40], [true, false]]);
+   * // => [['fred', 30, true], ['barney', 40, false]]
+   *
+   * ku.zip(a); // => [['fred', 'barney'], [30, 40], [true, false]]
+   * @param {array} values
+   * @returns {array[]}
+   */
+  ku.zip = function(values) {
+    var length = ku.max(ku.pluck('length', values)),
+        result = [];
+
+    for (var index = 0; index < length; index++) {
+      result[index] = ku.pluck(index, values);
+    }
+
+    return result;
+  },
+
+  /**
+   * Takes an object of properties and an object then returns a boolean of
+   * wether or not all properties of the properties object are equal to the
+   * same set of properties on the given object.
+   *
+   * @example
+   * var firstTwoCorrect = ku.compo({foo: 1, bar: 2});
+   *
+   * firstTwoCorrect({foo: 1, bar: 2, baz: 3, quux: 4}); // => true
+   * firstTwoCorrect({foo: 0, bar: 2}) // => false
+   * firstTwoCorrect({bax: 3, quux: 4}) // => false
+   * @param {object} props
+   * @param {object} object
+   * @returns {boolean}
+   */
+  ku.compo = function(props, object) {
+    return true; // TODO
+  };
+
+  ku.compo = ku.curry(ku.compo);
+
+  /**
+   * Takes an iterator and returns the corresponding iterator callback. This
+   * is used by methods like `find`, `map` and `filter` to generate their
+   * iterator.
+   *
+   * If a string is supplied, then it uses {@link ku.attr}. Known as the
+   * `_.pluck` notation in LoDash.
+   *
+   * If an object is supplied, then it uses {@link ku.combo}. Known as the
+   * `_.where` notation in Lodash.
+   *
+   * If a function is supplied, then it just uses that.
+   *
+   * @see iterator
+   * @param {iterator} iterator
+   * @returns {function}
+   */
+  ku.func = function(iterator) {
+    var type = typeof iterator;
+
+    if (type === 'function') {
+      return iterator;
+    } else if (type === 'string' || type === 'number') {
+      return ku.attr(iterator);
+    } else if (type === 'object') {
+      return ku.compo(iterator);
+    }
+  },
+
+  /**
+   * Takes an iterator and an array of values then iterates over each value
+   * and returns a array of the results of the iterator.
+   *
+   * @example
+   * ku.map(ku.add(1), [1, 2, 3, 4, 5]); // => [2, 3, 4, 5, 6]
+   * @param {iterator} iterator
+   * @param {array} values
+   * @returns {array}
+   */
+  ku.map = function(iterator, values) {
+    return values.map(ku.func(iterator));
+  };
+
+  ku.map = ku.curry(ku.map);
+
+  /**
+   * Takes an iterator and an array of values, then returns a subset of the
+   * array containing elements where the iterator returned a truthy value.
+   *
+   * @example
+   * var isOdd = ku(ku.eq(1), ku.mod(2));
+   *
+   * ku.filter(isOdd, [1, 2, 3, 4, 5]) // => [1, 3, 5]
+   * @param {iterator} iterator
+   * @param {array} values
+   * @returns {array}
+   */
+  ku.filter = function(iterator, values) {
+    return values.filter(ku.func(iterator));
+  },
+
+  ku.filter = ku.curry(ku.filter);
+
+  /**
+   * Takes an array of keys and an array of values then returns an object
+   * with properties equal to each key and value pair.
+   *
+   * @example
+   * ku.zipo(['foo', 'bar', 'baz', 'quux'], [1, 2, 3, 4]);
+   * // => {foo: 1, bar: 2, baz: 3, quux: 4}
+   * @param {string[]} keys
+   * @param {array} values
+   * @returns {object}
+   */
+  ku.zipo = function(keys, values) {
+    var object = {};
+
+    for (var index = 0; index < keys.length; index++) {
+      object[keys[index]] = values[index];
+    }
+
+    return object;
+  };
+
+  ku.zipo = ku.curry(ku.zipo);
+
+  /**
+   * Takes an attribute name an a value, then returns an object with that
+   * attribute equal to the value.
+   *
+   * @example
+   * ku.wrap('success', response); // => {success: response}
+   * @param {string} attr
+   * @param {*} value
+   * @return {object}
+   */
+  ku.wrap = function(attr, value) {
+    var object = {};
+    object[attr] = value;
+    return object;
+  };
+
+  ku.wrap = ku.curry(ku.wrap);
+
+  /**
+   * Takes a function and returns a new function with its first two arguments
+   * reversed.
+   *
+   * @example
+   * ku.add('foo', ' bar'); // => ' barfoo'
+   * ku.flip(ku.add)('foo', ' bar') // => 'foo bar'
+   * @param {function} func
+   * @returns {function}
+   */
+  ku.flip = function(func, x, y) {
+    return func(y, x);
+  };
+
+  ku.flip = ku.curry(ku.flip);
+
+  /**
+   * Takes two functions and returns a new function of those two functions
+   * composed together.
+   *
+   * @see ku
+   * @example
+   * ku.compose(ku.add(1), ku.sub(2))(1) // => 1 - 2 + 1 = 0
+   * @param {function} func
+   * @param {function} func2
+   * @returns {function}
+   */
+  ku.compose = function(func, func2, x) {
+    return func(func2(x));
+  };
+
+  ku.compose = ku.curry(ku.compose);
+
+  /**
+   * Takes an attribute and any number of arguments and returns a new
+   * function that will take an object and apply the given arguments to that
+   * object's attribute (method).
+   *
+   * @param {string} attr
+   * @param {...*} args
+   * @returns {function}
+   */
+  ku.method = function(attr) {
+    var args = Array.prototype.slice(arguments, 1);
+
+    return function(object) {
+      return object[attr] && object[attr].apply(null, args);
+    };
+  }
 
   return ku;
 });
