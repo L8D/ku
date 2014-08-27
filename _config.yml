@@ -1,6 +1,0 @@
-title: ku.js
-markdown: redcarpet
-redcarpet:
-  extensions:
-    - smart
-    - fenced_code_blocks
