@@ -42,7 +42,7 @@
   };
 
   var op = function(op) {
-    return curry(new Function('x,y', 'return x' + op + 'y'), 2);
+    return curry(new Function('x,y', 'return y' + op + 'x'), 2);
   };
 
   var ku = function() { // ku compose function
