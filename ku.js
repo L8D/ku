@@ -18,12 +18,15 @@
       slice = slice.bind(slice, slice),
       nil = null;
 
+  /** @namespace ku */
+
   /**
    * Similar to [ku.compose](#ku-compose) but is not curried so it will perform
    * a one-time composition stream and return a function to apply it's argument
    * to the stream.
    *
-   * @exports ku
+   * @constructor
+   * @memberof ku
    * @param {...function} func - Right-to-left functions to be composed
    * @returns {function}
    */
@@ -61,6 +64,7 @@
    * is a function and there are extra aguments, it will apply the extra
    * arguments to the result and return that.
    *
+   * @memberof ku
    * @param {function} func - Function to be transformed
    * @param {number} [expected=func.length] - Arity of the func
    * @returns {function}
@@ -101,6 +105,7 @@
   /**
    * Takes a number and returns it negated.
    *
+   * @memberof ku
    * @param {number} x
    * @returns {number}
    */
@@ -111,13 +116,15 @@
   /**
    * Takes two values and returns their sum in the form of `y + x`.
    *
+   * @memberof ku
    * @example
    * ku.map(ku.add('.json'), ['package', 'component', 'bower']);
    * // => ['package.json', 'component.json', 'bower.json']
    * @see addf
-   * @param {number|string} x
-   * @param {number|string} y
-   * @returns {number|string}
+   * @param {(number|string)} x
+   * @param {(number|string)} y
+   * @returns {(number|string)}
+   * @method add
    */
   var add = op('+');
 
@@ -125,6 +132,7 @@
    * Reversed version of [ku.add](#ku-add) for doing more efficient string
    * concatenation.
    *
+   * @memberof ku
    * @example
    * var addWWW = ku.addf('www.');
    *
@@ -132,39 +140,47 @@
    * @param {number} x
    * @param {number} y
    * @returns {number}
+   * @method ku
    */
   var addf = flip(add);
 
   /**
    * Takes two numbers and returns their difference in the form of `y - x`.
    *
+   * @memberof ku
    * @param {number} x
    * @param {number} y
    * @returns {number}
+   * @method sub
    */
   var sub = op('-');
 
   /**
    * Takes two numbers and returns their product in the form of `y * x`.
    *
+   * @memberof ku
    * @param {number} x
    * @param {number} y
    * @returns {number}
+   * @method mul
    */
   var mul = op('*');
 
   /**
    * Takes two numbers and return their quotient in the form of `y / x`.
    *
+   * @memberof ku
    * @param {number} x
    * @param {number} y
    * @returns {number}
+   * @method div
    */
   var div = op('/');
 
   /**
    * Takes two numbers and returns the remainder in the form of `x % y`.
    *
+   * @memberof ku
    * @param {number} x
    * @param {number} y
    * @returns {number}
@@ -178,6 +194,7 @@
    * in the form of `((x % y) + y) % y` to support operation on negative
    * numbers
    *
+   * @memberof ku
    * @param {number} x
    * @param {number} y
    * @returns {number}
@@ -193,6 +210,7 @@
    * of Haskell's `Maybe` monad, but more primitive since this is a static
    * mapping.
    *
+   * @memberof ku
    * @example
    * var toBool = ku.and(true);
    * toBool(undefined); // => undefined
@@ -201,6 +219,7 @@
    * @param {*} x
    * @param {*} y
    * @returns {*}
+   * @method and
    */
   var and = op('&&');
 
@@ -210,6 +229,7 @@
    * Note that you can use this as a default-value catcher in a similar vein
    * of Haskell's `Either` monad.
    *
+   * @memberof ku
    * @example
    * // #fff is default color
    * var getColors = ku(ku.map(ku.or('#fff')), ku.pluck('color'));
@@ -220,6 +240,7 @@
    * @param {*} x
    * @param {*} y
    * @returns {*}
+   * @method or
    */
   var or = op('||');
 
@@ -227,9 +248,11 @@
    * Takes two values and performs a static JavaScript comparison in the form
    * of `y === x`.
    *
+   * @memberof ku
    * @param {*} x
    * @param {*} y
    * @returns {*}
+   * @method eq
    */
   var eq = op('===');
 
@@ -237,8 +260,10 @@
    * Takes an array of numbers and returns the highest value according to
    * `Math.max`.
    *
+   * @memberof ku
    * @param {number[]} numbers
    * @returns {number}
+   * @method max
    */
   var max = Math.max.apply.bind(Math.max, Math.max);
 
@@ -246,8 +271,10 @@
    * Takes an array of numbers and returns the lowest value according to
    * `Math.min`.
    *
+   * @memberof ku
    * @param {number[]} numbers
    * @returns {number}
+   * @method min
    */
   var min = Math.max.apply.bind(Math.min, Math.max);
 
@@ -256,6 +283,7 @@
    * returns the value of that value's attribute. This is the same as
    * `ku(ku.map, ku.attr)`.
    *
+   * @memberof ku
    * @example
    * var getUsernames = ku.pluck('username');
    * getUsernames([
@@ -265,8 +293,9 @@
    * ]);
    * // => ['L8D', 'D8I', 'tj']
    * @param {string} attr
-   * @param {object[]} values
-   * @returns {array}
+   * @param {Object[]} values
+   * @returns {Array}
+   * @method pluck
    */
   var pluck = ku(map, attr);
 
@@ -274,11 +303,12 @@
    * Takes a single value and an array of values and returns a concatened
    * array of values with the first value pushed to the end.
    *
+   * @memberof ku
    * @example
    * someEventStream.map(ku.push(Bacon.noMore));
    * @param {*} value
-   * @param {array} values
-   * @returns {array}
+   * @param {Array} values
+   * @returns {Array}
    */
   function push(value, values) {
     return values.concat([value]);
@@ -288,6 +318,7 @@
    * Takes an attribute name and an object and returns that attribute of the
    * object.
    *
+   * @memberof ku
    * @example
    * var getBanlist = ku(ku.map(ku.attr('username'),
    *                     ku.filter(ku.attr('banned'));
@@ -299,7 +330,7 @@
    * ]);
    * // => ['D8I', 'tj']
    * @param {string} attr
-   * @param {object} value
+   * @param {Object} value
    * @returns {*}
    */
   function attr(attr, value) {
@@ -309,6 +340,7 @@
   /**
    * Takes any value and returns a boolean of the double-negated value.
    *
+   * @memberof ku
    * @example
    * // filter out events that have no items in their array
    * someEventStream.filter(ku(ku.zero, ku.attr('length')))
@@ -324,6 +356,7 @@
   /**
    * Takes any value and returns a boolean of the negated value.
    *
+   * @memberof ku
    * @example
    * ku.not(true) // => false
    * @param {*} value
@@ -338,8 +371,9 @@
    * in that array until the iterator returns a truthy value, then returns
    * that element.
    *
+   * @memberof ku
    * @param {iterator} iterator
-   * @param {array} values
+   * @param {Array} values
    * @returns {*}
    */
   function find(iterator, values) {
@@ -350,8 +384,9 @@
    * Same as [ku.find](#ku-find) except it returns the index of the element
    * instead of the element itself.
    *
+   * @memberof ku
    * @param {iterator} iterator
-   * @param {array} values
+   * @param {Array} values
    * @returns {number}
    */
   function findI(iterator, values) {
@@ -364,12 +399,13 @@
    * Takes an amount, _n_, and an array of values then returns the first _n_
    * elements of those values.
    *
+   * @memberof ku
    * @example
    * ku.take(5, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
    * // => [1, 2, 3, 4, 5]
    * @param {number} amount
-   * @param {array} values
-   * @returns {array}
+   * @param {Array} values
+   * @returns {Array}
    */
   function take(amount, values) {
     return values.slice(0, amount);
@@ -379,9 +415,10 @@
    * Takes an amount, _n_, and an array of values then returns that array
    * except for its last _n_ values.
    *
+   * @memberof ku
    * @param {number} amount
-   * @param {array} values
-   * @returns {array}
+   * @param {Array} values
+   * @returns {Array}
    */
   function drop(amount, values) {
     return values.slice(values.length - amount);
@@ -391,7 +428,8 @@
    * Takes an array of values and returns the first element of that array.
    * Same as `ku.take(1)` or `ku.attr(0)`.
    *
-   * @param {array} values
+   * @memberof ku
+   * @param {Array} values
    * @returns {*}
    */
   function head(values) {
@@ -402,8 +440,9 @@
    * Takes an array of values and returns that array except for the first
    * element. Same as `ku.method('slice', 1)`
    *
-   * @param {array}
-   * @return {array}
+   * @memberof ku
+   * @param {Array}
+   * @return {Array}
    */
   function tail(values) {
     return values.slice(1);
@@ -413,8 +452,9 @@
    * Takes an array of values and returns that array except for the last
    * element.
    *
-   * @param {array}
-   * @return {array}
+   * @memberof ku
+   * @param {Array}
+   * @return {Array}
    */
   function init(values) {
     return values.slice(0, values.length - 1);
@@ -427,13 +467,14 @@
    *
    * Note that this same function can be used to unzip zipped arrays also.
    *
+   * @memberof ku
    * @example
    * var a = ku.zip([['fred', 'barney'], [30, 40], [true, false]]);
    * // => [['fred', 30, true], ['barney', 40, false]]
    *
    * ku.zip(a); // => [['fred', 'barney'], [30, 40], [true, false]]
-   * @param {array} values
-   * @returns {array[]}
+   * @param {Array} values
+   * @returns {Array[]}
    */
   function zip(values) {
     var length = max(pluck('length', values)),
@@ -451,14 +492,15 @@
    * wether or not all properties of the properties object are equal to the
    * same set of properties on the given object.
    *
+   * @memberof ku
    * @example
    * var firstTwoCorrect = ku.compo({foo: 1, bar: 2});
    *
    * firstTwoCorrect({foo: 1, bar: 2, baz: 3, quux: 4}); // => true
    * firstTwoCorrect({foo: 0, bar: 2}) // => false
    * firstTwoCorrect({bax: 3, quux: 4}) // => false
-   * @param {object} props
-   * @param {object} object
+   * @param {Object} props
+   * @param {Object} object
    * @returns {boolean}
    */
   function compo(props, object) {
@@ -478,6 +520,7 @@
    *
    * If a function is supplied, then it just uses that.
    *
+   * @memberof ku
    * @see iterator
    * @param {iterator} iterator
    * @returns {function}
@@ -498,11 +541,12 @@
    * Takes an iterator and an array of values then iterates over each value
    * and returns a array of the results of the iterator.
    *
+   * @memberof ku
    * @example
    * ku.map(ku.add(1), [1, 2, 3, 4, 5]); // => [2, 3, 4, 5, 6]
    * @param {iterator} iterator
-   * @param {array} values
-   * @returns {array}
+   * @param {Array} values
+   * @returns {Array}
    */
   function map(iterator, values) {
     return values.map(func(iterator));
@@ -512,13 +556,14 @@
    * Takes an iterator and an array of values, then returns a subset of the
    * array containing elements where the iterator returned a truthy value.
    *
+   * @memberof ku
    * @example
    * var isOdd = ku(ku.eq(1), ku.mod(2));
    *
    * ku.filter(isOdd, [1, 2, 3, 4, 5]) // => [1, 3, 5]
    * @param {iterator} iterator
-   * @param {array} values
-   * @returns {array}
+   * @param {Array} values
+   * @returns {Array}
    */
   function filter(iterator, values) {
     return values.filter(func(iterator));
@@ -528,12 +573,13 @@
    * Takes an array of keys and an array of values then returns an object
    * with properties equal to each key and value pair.
    *
+   * @memberof ku
    * @example
    * ku.zipo(['foo', 'bar', 'baz', 'quux'], [1, 2, 3, 4]);
    * // => {foo: 1, bar: 2, baz: 3, quux: 4}
    * @param {string[]} keys
-   * @param {array} values
-   * @returns {object}
+   * @param {Array} values
+   * @returns {Object}
    */
   function zipo(keys, values) {
     var object = {};
@@ -549,11 +595,12 @@
    * Takes an attribute name an a value, then returns an object with that
    * attribute equal to the value.
    *
+   * @memberof ku
    * @example
    * ku.wrap('success', response); // => {success: response}
    * @param {string} attr
    * @param {*} value
-   * @return {object}
+   * @return {Object}
    */
   function wrap(attr, value) {
     var object = {};
@@ -565,6 +612,7 @@
    * Takes a function and returns a new function with its first two arguments
    * reversed.
    *
+   * @memberof ku
    * @example
    * ku.add('foo', ' bar'); // => ' barfoo'
    * ku.flip(ku.add)('foo', ' bar') // => 'foo bar'
@@ -579,6 +627,7 @@
    * Takes two functions and returns a new function of those two functions
    * composed together.
    *
+   * @memberof ku
    * @see ku
    * @example
    * ku.compose(ku.add(1), ku.sub(2))(1) // => 1 - 2 + 1 = 0
@@ -595,6 +644,7 @@
    * function that will take an object and apply the given arguments to that
    * object's attribute (method).
    *
+   * @memberof ku
    * @param {string} attr
    * @param {...*} args
    * @returns {function}
