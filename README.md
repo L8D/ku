@@ -1,8 +1,7 @@
 ku
 ==
 
-A lightweight functional programming utility suite inspired by wu.js and
-Underscore.
+A lightweight functional composition library inspired by wu.js and Underscore.
 
 ## Purpose
 
