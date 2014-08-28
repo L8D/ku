@@ -1,0 +1,7 @@
+title: ku.js
+markdown: redcarpet
+highlighter: pygments
+redcarpet:
+  extensions:
+    - smart
+    - fenced_code_blocks

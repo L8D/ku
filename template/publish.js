@@ -23,20 +23,32 @@ exports.publish = function(data, options) {
       description: doclet.description,
       example: doclet.examples && doclet.examples[0],
       params: doclet.params.map(function(param) {
-        return {
-          name: param.name,
-          type: makeParam(param)
-        };
-      })
+        return makeParam(param);
+      }),
+      args: '(' + doclet.params.map(function(param) {
+        if (param.optional) {
+          if (param.defaultvalue) {
+            return '[' + param.name + '=' + param.defaultvalue + ']';
+          }
+
+          return '[' + param.name + ']';
+        }
+
+        if (param.variable) {
+          return param.name + '...';
+        }
+
+        return param.name;
+      }).join(', ') + ')'
     };
   });
 
   docs.forEach(function(doc) {
     var s =
       '---' + '\n' +
-      'title: ' + doc.name + '\n' +
-      'params: ' + JSON.stringify(doc.params) + '\n' +
-      'returns: ' + doc.returns + '\n' +
+      'title: "' + doc.name + '"\n' +
+      'type: "' + doc.params.concat([doc.returns]).join(' -> ') + '"\n' +
+      'args: "' + doc.args + '"\n' +
       '---' + '\n\n';
 
     s += doc.description + '\n';
