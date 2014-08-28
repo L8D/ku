@@ -6,17 +6,16 @@
  */
 ;(function(root, ku) {
   if (typeof define === 'function' && define.amd) {
-    define(function() {
-      return ku();
-    });
+    define(ku);
   } else if (typeof module !== 'undefined' && module.exports) {
     module.exports = ku();
   } else {
-    root['ku'] = ku(); // closure compiler
+    root.ku = ku(); // closure compiler
   }
 })(this, function() {
   'use strict';
-  var slice = Array.prototype.slice;
+  var slice = Array.prototype.slice,
+      nil = null;
 
   /**
    * Similar to [ku.compose](#ku-compose) but is not curried so it will perform
@@ -66,14 +65,14 @@
    * @returns {function}
    */
   function curry(func, expected) {
-    if (expected == null) expected = func.length;
+    if (expected == nil) expected = func.length;
 
     return function carrier() {
       var args = slice.call(arguments, 0);
 
       if (args.length > expected) {
         var extra = args.splice(expected, args.length - expected),
-            result = func.apply(null, args);
+            result = func.apply(nil, args);
 
         if (typeof result === 'function') {
           if (result.length === 0) {
@@ -85,15 +84,17 @@
           return result;
         }
       } else if (args.length === expected) {
-        return func.apply(this, args);
+        return func.apply(nil, args);
       } else {
         return function() {
-          return carrier.apply(null, args.concat(
-            slice.call(arguments, 0)
-          ));
+          return carrier.apply(nil, args.concat(slice.call(arguments, 0)));
         };
       }
     };
+  }
+
+  function op(operator) {
+    return curry(new Function('x,y', 'return y' + operator + 'x'), 2);
   }
 
   /**
@@ -117,9 +118,7 @@
    * @param {number|string} y
    * @returns {number|string}
    */
-  function add(x, y) {
-    return y + x;
-  }
+  var add = op('+');
 
   /**
    * Reversed version of [ku.add](#ku-add) for doing more efficient string
@@ -133,10 +132,7 @@
    * @param {number} y
    * @returns {number}
    */
-
-  function addf(x, y) {
-    return x + y;
-  }
+  var addf = flip(add);
 
   /**
    * Takes two numbers and returns their difference in the form of `y - x`.
@@ -145,9 +141,7 @@
    * @param {number} y
    * @returns {number}
    */
-  function sub(x, y) {
-    return y - x;
-  }
+  var sub = op('-');
 
   /**
    * Takes two numbers and returns their product in the form of `y * x`.
@@ -156,9 +150,7 @@
    * @param {number} y
    * @returns {number}
    */
-  function mul(x, y) {
-    return y * x;
-  }
+  var mul = op('*');
 
   /**
    * Takes two numbers and return their quotient in the form of `y / x`.
@@ -167,9 +159,7 @@
    * @param {number} y
    * @returns {number}
    */
-  function div(x, y) {
-    return y / x;
-  }
+  var div = op('/');
 
   /**
    * Takes two numbers and returns the remainder in the form of `x % y`.
@@ -211,9 +201,7 @@
    * @param {*} y
    * @returns {*}
    */
-  function and(x, y) {
-    return y && x;
-  }
+  var and = op('&&');
 
   /**
    * Takes two values and performs and OR comparison in the form of `y || x`.
@@ -232,9 +220,7 @@
    * @param {*} y
    * @returns {*}
    */
-  function or(x, y) {
-    return y || x;
-  }
+  var or = op('||');
 
   /**
    * Takes two values and performs a static JavaScript comparison in the form
@@ -244,9 +230,7 @@
    * @param {*} y
    * @returns {*}
    */
-  function eq(x, y) {
-    return y === x;
-  }
+  var eq = op('===');
 
   /**
    * Takes an array of numbers and returns the highest value according to
@@ -255,9 +239,7 @@
    * @param {number[]} numbers
    * @returns {number}
    */
-  function max(numbers) {
-    return Math.max.apply(null, numbers);
-  }
+  var max = Math.max.apply.bind(Math.max, Math.max);
 
   /**
    * Takes an array of numbers and returns the lowest value according to
@@ -266,9 +248,7 @@
    * @param {number[]} numbers
    * @returns {number}
    */
-  function min(numbers) {
-    return Math.min.apply(null, numbers);
-  }
+  var min = Math.max.apply.bind(Math.min, Math.max);
 
   /**
    * Takes an attribute and array of values, then maps over each value and
@@ -287,9 +267,7 @@
    * @param {object[]} values
    * @returns {array}
    */
-  function pluck(attr, values) {
-    return map(attr(attr), values);
-  }
+  var pluck = ku(map, attr);
 
   /**
    * Takes a single value and an array of values and returns a concatened
@@ -624,7 +602,7 @@
     var args = slice(arguments, 1);
 
     return function(object) {
-      return object[attr] && object[attr].apply(null, args);
+      return object[attr] && object[attr].apply(nil, args);
     };
   }
 
