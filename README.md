@@ -24,4 +24,4 @@ Underscore.
 
 # Documentation
 
-Find the API documentation on GitHub pages site, [here](l8d.github.io/ku).
+Find the API documentation on GitHub pages site, [here](https://l8d.github.io/ku).
