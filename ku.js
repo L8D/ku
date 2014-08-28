@@ -1,27 +1,34 @@
-(function(root, ku) {
+/**
+ * @license
+ * ku 0.1.0 <http://github.com/L8D/ku/>
+ * Copyright 2014 Tenor Biel
+ * Available under MIT license <http://github.com/L8D/ku/>
+ */
+;(function(root, ku) {
   if (typeof define === 'function' && define.amd) {
     define(function() {
-      return ku(root);
+      return ku();
     });
   } else if (typeof module !== 'undefined' && module.exports) {
-    exports = module.exports = ku(root);
+    module.exports = ku();
   } else {
-    root.ku = ku(root);
+    root['ku'] = ku(); // closure compiler
   }
-})(this, function(root) {
+})(this, function() {
   'use strict';
+  var slice = Array.prototype.slice;
 
   /**
-   * Similar to {@link ku.compose} but is not curried so it will perform a
-   * one-time composition stream and return a function to apply it's argument
+   * Similar to [ku.compose](#ku-compose) but is not curried so it will perform
+   * a one-time composition stream and return a function to apply it's argument
    * to the stream.
    *
    * @exports ku
    * @param {...function} func - Right-to-left functions to be composed
    * @returns {function}
    */
-  var ku = function(func) {
-    var args = Array.prototype.slice.call(arguments, 0);
+  function ku(func) {
+    var args = slice.call(arguments, 0);
 
     return function(value) {
       for (var index = args.length - 1; index + 1; index--) {
@@ -30,7 +37,7 @@
 
       return value;
     };
-  };
+  }
 
   /**
    * A notation for an iterator function used in methods like `find`, `filter`,
@@ -58,11 +65,11 @@
    * @param {number} [expected=func.length] - Arity of the func
    * @returns {function}
    */
-  ku.curry = function(func, expected) {
+  function curry(func, expected) {
     if (expected == null) expected = func.length;
 
     return function carrier() {
-      var args = Array.prototype.slice.call(arguments, 0);
+      var args = slice.call(arguments, 0);
 
       if (args.length > expected) {
         var extra = args.splice(expected, args.length - expected),
@@ -82,12 +89,22 @@
       } else {
         return function() {
           return carrier.apply(null, args.concat(
-            Array.prototype.slice.call(arguments, 0)
+            slice.call(arguments, 0)
           ));
         };
       }
     };
-  };
+  }
+
+  /**
+   * Takes a number and returns it negated.
+   *
+   * @param {number} x
+   * @returns {number}
+   */
+  function negate(x) {
+    return -x;
+  }
 
   /**
    * Takes two values and returns their sum in the form of `y + x`.
@@ -100,14 +117,12 @@
    * @param {number|string} y
    * @returns {number|string}
    */
-  ku.add = function(x, y) {
+  function add(x, y) {
     return y + x;
-  };
-
-  ku.add = ku.curry(ku.add);
+  }
 
   /**
-   * Reversed version of {@link ku.add} for doing more efficient string
+   * Reversed version of [ku.add](#ku-add) for doing more efficient string
    * concatenation.
    *
    * @example
@@ -119,11 +134,9 @@
    * @returns {number}
    */
 
-  ku.addf = function(x, y) {
+  function addf(x, y) {
     return x + y;
-  };
-
-  ku.addf = ku.curry(ku.addf);
+  }
 
   /**
    * Takes two numbers and returns their difference in the form of `y - x`.
@@ -132,11 +145,9 @@
    * @param {number} y
    * @returns {number}
    */
-  ku.sub = function(x, y) {
+  function sub(x, y) {
     return y - x;
-  };
-
-  ku.sub = ku.curry(ku.sub);
+  }
 
   /**
    * Takes two numbers and returns their product in the form of `y * x`.
@@ -145,11 +156,9 @@
    * @param {number} y
    * @returns {number}
    */
-  ku.mul = function(x, y) {
+  function mul(x, y) {
     return y * x;
-  };
-
-  ku.mul = ku.curry(ku.mul);
+  }
 
   /**
    * Takes two numbers and return their quotient in the form of `y / x`.
@@ -158,11 +167,9 @@
    * @param {number} y
    * @returns {number}
    */
-  ku.div = function(x, y) {
+  function div(x, y) {
     return y / x;
-  };
-
-  ku.div = ku.curry(ku.div);
+  }
 
   /**
    * Takes two numbers and returns the remainder in the form of `x % y`.
@@ -171,14 +178,12 @@
    * @param {number} y
    * @returns {number}
    */
-  ku.mod = function(x, y) {
+  function mod(x, y) {
     return x % y;
-  };
-
-  ku.mod = ku.curry(ku.mod);
+  }
 
   /**
-   * Same as {@link ku.mod} but return accurate modulo operation
+   * Same as [ku.mod](#ku-mod) but return accurate modulo operation
    * in the form of `((x % y) + y) % y` to support operation on negative
    * numbers
    *
@@ -186,11 +191,9 @@
    * @param {number} y
    * @returns {number}
    */
-  ku.cmod = function(x, y) {
+  function cmod(x, y) {
     return ((x % y) + y) % y;
-  };
-
-  ku.cmod = ku.curry(ku.cmod);
+  }
 
   /**
    * Takes two values then performs an AND comparison in the form of `y && x`.
@@ -208,11 +211,9 @@
    * @param {*} y
    * @returns {*}
    */
-  ku.and = function(x, y) {
+  function and(x, y) {
     return y && x;
-  };
-
-  ku.and = ku.curry(ku.and);
+  }
 
   /**
    * Takes two values and performs and OR comparison in the form of `y || x`.
@@ -231,11 +232,9 @@
    * @param {*} y
    * @returns {*}
    */
-  ku.or = function(x, y) {
+  function or(x, y) {
     return y || x;
-  };
-
-  ku.or = ku.curry(ku.or);
+  }
 
   /**
    * Takes two values and performs a static JavaScript comparison in the form
@@ -245,11 +244,9 @@
    * @param {*} y
    * @returns {*}
    */
-  ku.eq = function(x, y) {
+  function eq(x, y) {
     return y === x;
-  };
-
-  ku.eq = ku.curry(ku.eq);
+  }
 
   /**
    * Takes an array of numbers and returns the highest value according to
@@ -258,9 +255,9 @@
    * @param {number[]} numbers
    * @returns {number}
    */
-  ku.max = function(numbers) {
+  function max(numbers) {
     return Math.max.apply(null, numbers);
-  },
+  }
 
   /**
    * Takes an array of numbers and returns the lowest value according to
@@ -269,9 +266,9 @@
    * @param {number[]} numbers
    * @returns {number}
    */
-  ku.min = function(numbers) {
+  function min(numbers) {
     return Math.min.apply(null, numbers);
-  },
+  }
 
   /**
    * Takes an attribute and array of values, then maps over each value and
@@ -290,11 +287,9 @@
    * @param {object[]} values
    * @returns {array}
    */
-  ku.pluck = function(attr, values) {
-    return ku.map(ku.attr(attr), values);
-  };
-
-  ku.pluck = ku.curry(ku.pluck);
+  function pluck(attr, values) {
+    return map(attr(attr), values);
+  }
 
   /**
    * Takes a single value and an array of values and returns a concatened
@@ -306,11 +301,9 @@
    * @param {array} values
    * @returns {array}
    */
-  ku.push = function(value, values) {
+  function push(value, values) {
     return values.concat([value]);
-  };
-
-  ku.push = ku.curry(ku.push);
+  }
 
   /**
    * Takes an attribute name and an object and returns that attribute of the
@@ -330,11 +323,9 @@
    * @param {object} value
    * @returns {*}
    */
-  ku.attr = function(attr, value) {
+  function attr(attr, value) {
     return value[attr];
-  };
-
-  ku.attr = ku.curry(ku.attr);
+  }
 
   /**
    * Takes any value and returns a boolean of the double-negated value.
@@ -347,9 +338,9 @@
    * @param {*} value
    * @returns {boolean}
    */
-  ku.zero = function(value) {
+  function zero(value) {
     return !!value;
-  },
+  }
 
   /**
    * Takes any value and returns a boolean of the negated value.
@@ -359,9 +350,9 @@
    * @param {*} value
    * @returns {boolean}
    */
-  ku.not = function(value) {
+  function not(value) {
     return !value;
-  },
+  }
 
   /**
    * Takes an iterator and an array of values, then iterates over each element
@@ -372,27 +363,23 @@
    * @param {array} values
    * @returns {*}
    */
-  ku.find = function(iterator, values) {
-    return values[ku.findI(iterator, values)];
-  };
-
-  ku.find = ku.curry(ku.find);
+  function find(iterator, values) {
+    return values[findI(iterator, values)];
+  }
 
   /**
-   * Same as {@link ku.find} except it returns the index of the element
+   * Same as [ku.find](#ku-find) except it returns the index of the element
    * instead of the element itself.
    *
    * @param {iterator} iterator
    * @param {array} values
    * @returns {number}
    */
-  ku.findI = function(iterator, values) {
+  function findI(iterator, values) {
     for (var index = 0; index < values.length; index++) {
       if (iterator(values[index])) return index;
     }
-  };
-
-  ku.findI = ku.curry(ku.findI);
+  }
 
   /**
    * Takes an amount, _n_, and an array of values then returns the first _n_
@@ -405,11 +392,9 @@
    * @param {array} values
    * @returns {array}
    */
-  ku.take = function(amount, values) {
+  function take(amount, values) {
     return values.slice(0, amount);
-  };
-
-  ku.take = ku.curry(ku.take);
+  }
 
   /**
    * Takes an amount, _n_, and an array of values then returns that array
@@ -419,11 +404,9 @@
    * @param {array} values
    * @returns {array}
    */
-  ku.drop = function(amount, values) {
+  function drop(amount, values) {
     return values.slice(values.length - amount);
-  };
-
-  ku.drop = ku.curry(ku.drop);
+  }
 
   /**
    * Takes an array of values and returns the first element of that array.
@@ -432,9 +415,9 @@
    * @param {array} values
    * @returns {*}
    */
-  ku.head = function(values) {
+  function head(values) {
     return values[0];
-  },
+  }
 
   /**
    * Takes an array of values and returns that array except for the first
@@ -443,9 +426,9 @@
    * @param {array}
    * @return {array}
    */
-  ku.tail = function(values) {
+  function tail(values) {
     return values.slice(1);
-  },
+  }
 
   /**
    * Takes an array of values and returns that array except for the last
@@ -454,9 +437,9 @@
    * @param {array}
    * @return {array}
    */
-  ku.init = function(values) {
+  function init(values) {
     return values.slice(0, values.length - 1);
-  },
+  }
 
   /**
    * Takes an array of arrays and returns an array of grouped elements of
@@ -473,16 +456,16 @@
    * @param {array} values
    * @returns {array[]}
    */
-  ku.zip = function(values) {
-    var length = ku.max(ku.pluck('length', values)),
+  function zip(values) {
+    var length = max(pluck('length', values)),
         result = [];
 
     for (var index = 0; index < length; index++) {
-      result[index] = ku.pluck(index, values);
+      result[index] = pluck(index, values);
     }
 
     return result;
-  },
+  }
 
   /**
    * Takes an object of properties and an object then returns a boolean of
@@ -499,21 +482,19 @@
    * @param {object} object
    * @returns {boolean}
    */
-  ku.compo = function(props, object) {
+  function compo(props, object) {
     return true; // TODO
-  };
-
-  ku.compo = ku.curry(ku.compo);
+  }
 
   /**
    * Takes an iterator and returns the corresponding iterator callback. This
    * is used by methods like `find`, `map` and `filter` to generate their
    * iterator.
    *
-   * If a string is supplied, then it uses {@link ku.attr}. Known as the
+   * If a string is supplied, then it uses [ku.attr](#ku-attr). Known as the
    * `_.pluck` notation in LoDash.
    *
-   * If an object is supplied, then it uses {@link ku.combo}. Known as the
+   * If an object is supplied, then it uses [ku.combo](#ku-combo). Known as the
    * `_.where` notation in Lodash.
    *
    * If a function is supplied, then it just uses that.
@@ -522,17 +503,17 @@
    * @param {iterator} iterator
    * @returns {function}
    */
-  ku.func = function(iterator) {
+  function func(iterator) {
     var type = typeof iterator;
 
     if (type === 'function') {
       return iterator;
     } else if (type === 'string' || type === 'number') {
-      return ku.attr(iterator);
+      return attr(iterator);
     } else if (type === 'object') {
-      return ku.compo(iterator);
+      return compo(iterator);
     }
-  },
+  }
 
   /**
    * Takes an iterator and an array of values then iterates over each value
@@ -544,11 +525,9 @@
    * @param {array} values
    * @returns {array}
    */
-  ku.map = function(iterator, values) {
-    return values.map(ku.func(iterator));
-  };
-
-  ku.map = ku.curry(ku.map);
+  function map(iterator, values) {
+    return values.map(func(iterator));
+  }
 
   /**
    * Takes an iterator and an array of values, then returns a subset of the
@@ -562,11 +541,9 @@
    * @param {array} values
    * @returns {array}
    */
-  ku.filter = function(iterator, values) {
-    return values.filter(ku.func(iterator));
-  },
-
-  ku.filter = ku.curry(ku.filter);
+  function filter(iterator, values) {
+    return values.filter(func(iterator));
+  }
 
   /**
    * Takes an array of keys and an array of values then returns an object
@@ -579,7 +556,7 @@
    * @param {array} values
    * @returns {object}
    */
-  ku.zipo = function(keys, values) {
+  function zipo(keys, values) {
     var object = {};
 
     for (var index = 0; index < keys.length; index++) {
@@ -587,9 +564,7 @@
     }
 
     return object;
-  };
-
-  ku.zipo = ku.curry(ku.zipo);
+  }
 
   /**
    * Takes an attribute name an a value, then returns an object with that
@@ -601,13 +576,11 @@
    * @param {*} value
    * @return {object}
    */
-  ku.wrap = function(attr, value) {
+  function wrap(attr, value) {
     var object = {};
     object[attr] = value;
     return object;
-  };
-
-  ku.wrap = ku.curry(ku.wrap);
+  }
 
   /**
    * Takes a function and returns a new function with its first two arguments
@@ -619,11 +592,9 @@
    * @param {function} func
    * @returns {function}
    */
-  ku.flip = function(func, x, y) {
+  function flip(func, x, y) {
     return func(y, x);
-  };
-
-  ku.flip = ku.curry(ku.flip);
+  }
 
   /**
    * Takes two functions and returns a new function of those two functions
@@ -636,11 +607,9 @@
    * @param {function} func2
    * @returns {function}
    */
-  ku.compose = function(func, func2, x) {
+  function compose(func, func2, x) {
     return func(func2(x));
-  };
-
-  ku.compose = ku.curry(ku.compose);
+  }
 
   /**
    * Takes an attribute and any number of arguments and returns a new
@@ -651,13 +620,49 @@
    * @param {...*} args
    * @returns {function}
    */
-  ku.method = function(attr) {
-    var args = Array.prototype.slice(arguments, 1);
+  function method(attr) {
+    var args = slice(arguments, 1);
 
     return function(object) {
       return object[attr] && object[attr].apply(null, args);
     };
   }
+
+  ku.curry = curry;
+  ku.add = curry(add);
+  ku.addf = curry(addf);
+  ku.sub = curry(sub);
+  ku.mul = curry(mul);
+  ku.div = curry(div);
+  ku.mod = curry(mod);
+  ku.cmod = curry(cmod);
+  ku.and = curry(and);
+  ku.or = curry(or);
+  ku.eq = curry(eq);
+  ku.max = max;
+  ku.min = min;
+  ku.pluck = curry(pluck);
+  ku.push = curry(push);
+  ku.attr = curry(attr);
+  ku.zero = zero;
+  ku.not = not;
+  ku.find = curry(find);
+  ku.findI = curry(findI);
+  ku.take = curry(take);
+  ku.drop = curry(drop);
+  ku.head = head;
+  ku.tail = tail;
+  ku.init = init;
+  ku.zip = zip;
+  ku.compo = curry(compo);
+  ku.func = func;
+  ku.map = curry(map);
+  ku.filter = curry(filter);
+  ku.zipo = curry(zipo);
+  ku.wrap = curry(wrap);
+  ku.flip = curry(flip);
+  ku.compose = curry(compose);
+  ku.method = method;
 
   return ku;
 });
