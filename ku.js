@@ -15,6 +15,7 @@
 })(this, function() {
   'use strict';
   var slice = Array.prototype.slice,
+      slice = slice.bind(slice, slice),
       nil = null;
 
   /**
@@ -27,7 +28,7 @@
    * @returns {function}
    */
   function ku(func) {
-    var args = slice.call(arguments, 0);
+    var args = slice(arguments, 0);
 
     return function(value) {
       for (var index = args.length - 1; index + 1; index--) {
@@ -68,7 +69,7 @@
     if (expected == nil) expected = func.length;
 
     return function carrier() {
-      var args = slice.call(arguments, 0);
+      var args = slice(arguments, 0);
 
       if (args.length > expected) {
         var extra = args.splice(expected, args.length - expected),
@@ -87,7 +88,7 @@
         return func.apply(nil, args);
       } else {
         return function() {
-          return carrier.apply(nil, args.concat(slice.call(arguments, 0)));
+          return carrier.apply(nil, args.concat(slice(arguments, 0)));
         };
       }
     };
