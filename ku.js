@@ -15,7 +15,7 @@
 })(this, function() {
   'use strict';
   var slice = Array.prototype.slice,
-      slice = slice.bind(slice, slice),
+      slice = slice.call.bind(slice),
       nil = null;
 
   /** @namespace ku */
