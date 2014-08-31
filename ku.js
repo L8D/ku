@@ -14,8 +14,7 @@
   }
 })(this, function() {
   'use strict';
-  var slice = Array.prototype.slice,
-      slice = slice.call.bind(slice),
+  var slice = curry.call.bind([].slice),
       nil = null;
 
   /** @namespace ku */
