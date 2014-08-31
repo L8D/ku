@@ -1,6 +1,6 @@
 /**
  * @license
- * ku 0.1.0 <http://github.com/L8D/ku/>
+ * ku 0.1.1 <http://github.com/L8D/ku/>
  * Copyright 2014 Tenor Biel
  * Available under MIT license <http://github.com/L8D/ku/>
  */
