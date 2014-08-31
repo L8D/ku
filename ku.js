@@ -657,16 +657,16 @@
   }
 
   ku.curry = curry;
-  ku.add = curry(add);
+  ku.add = add;
   ku.addf = curry(addf);
-  ku.sub = curry(sub);
-  ku.mul = curry(mul);
-  ku.div = curry(div);
-  ku.mod = curry(mod);
-  ku.cmod = curry(cmod);
-  ku.and = curry(and);
-  ku.or = curry(or);
-  ku.eq = curry(eq);
+  ku.sub = sub;
+  ku.mul = mul;
+  ku.div = div;
+  ku.mod = mod;
+  ku.cmod = cmod;
+  ku.and = and;
+  ku.or = or;
+  ku.eq = eq;
   ku.max = max;
   ku.min = min;
   ku.pluck = curry(pluck);
