@@ -1,7 +1,7 @@
 ku
 ==
 
-A lightweight functional composition library inspired by wu.js and Underscore.
+A lightweight alternative to [Ramda](https://github.com/CrossEye/ramda).
 
 ## Purpose
 
