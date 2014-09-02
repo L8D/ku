@@ -7,5 +7,13 @@
   },
   "license": "MIT",
   "main": "ku.js",
-  "description": "A lightweight alternative to Rambda."
+  "description": "A lightweight alternative to Rambda.",
+  "devDependencies": {
+    "coffee-script": "^1.8.0",
+    "mocha": "^1.21.4",
+    "should": "^4.0.4"
+  },
+  "scripts": {
+    "test": "mocha --compilers coffee:coffee-script/register"
+  }
 }
