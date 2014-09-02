@@ -1,7 +1,10 @@
 {
   "name": "ku",
   "version": "0.1.1",
-  "repo": "L8D/ku",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/L8D/ku.git"
+  },
   "license": "MIT",
   "main": "ku.js",
   "description": "A lightweight alternative to Rambda."
