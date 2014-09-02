@@ -652,7 +652,7 @@
     var args = slice(arguments, 1);
 
     return function(object) {
-      return object[attr] && object[attr].apply(nil, args);
+      return object[attr].apply(object, args);
     };
   }
 
