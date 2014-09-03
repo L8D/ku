@@ -342,6 +342,17 @@ describe('ku', function() {
     });
   });
 
+  describe('attrs', function() {
+    it('should return given property of given object', function() {
+      ku.attrs('foo')({foo: 'bar'}).should.equal('bar');
+    });
+
+    it('should take multiple property chains', function() {
+      ku.attrs('foo', 'bar', 'baz')({foo: {bar: {baz: 'quux'}}})
+        .should.equal('quux');
+    });
+  });
+
   describe('method', function() {
     it('should take a method name and return a method-caller', function() {
       ku.method('toString')(42).should.equal('42');
