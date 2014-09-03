@@ -1,4 +1,4 @@
-ku[![Build Status](https://travis-ci.org/L8D/ku.svg?branch=master)](https://travis-ci.org/L8D/ku)
+ku [![Build Status](https://travis-ci.org/L8D/ku.svg?branch=master)](https://travis-ci.org/L8D/ku)
 ==
 
 A lightweight alternative to [Ramda](https://github.com/CrossEye/ramda).
