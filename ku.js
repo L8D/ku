@@ -278,27 +278,6 @@
   var min = Math.max.apply.bind(Math.min, Math.max);
 
   /**
-   * Takes an attribute and array of values, then maps over each value and
-   * returns the value of that value's attribute. This is the same as
-   * `ku(ku.map, ku.attr)`.
-   *
-   * @memberof ku
-   * @example
-   * var getUsernames = ku.pluck('username');
-   * getUsernames([
-   *   {username: 'L8D', password: 'somepassword', id: 123},
-   *   {username: 'D8I', password: 'otherpassword', id: 234},
-   *   {username: 'tj', password: 'whoknows', id: 345}
-   * ]);
-   * // => ['L8D', 'D8I', 'tj']
-   * @param {string} attr
-   * @param {Object[]} values
-   * @returns {Array}
-   * @method pluck
-   */
-  var pluck = ku(map, attr);
-
-  /**
    * Takes a single value and an array of values and returns a concatened
    * array of values with the first value pushed to the end.
    *
@@ -420,7 +399,7 @@
    * @returns {Array}
    */
   function drop(amount, values) {
-    return values.slice(values.length - amount);
+    return values.slice(amount);
   }
 
   /**
@@ -530,9 +509,9 @@
     if (type === 'function') {
       return iterator;
     } else if (type === 'string' || type === 'number') {
-      return attr(iterator);
+      return ku.attr(iterator);
     } else if (type === 'object') {
-      return compo(iterator);
+      return ku.compo(iterator);
     }
   }
 
@@ -549,6 +528,31 @@
    */
   function map(iterator, values) {
     return values.map(func(iterator));
+  }
+
+  /**
+   * Takes an attribute and array of values, then maps over each value and
+   * returns the value of that value's attribute. This is the same as
+   * `ku(ku.map, ku.attr)`.
+   *
+   * @memberof ku
+   * @example
+   * var getUsernames = ku.pluck('username');
+   * getUsernames([
+   *   {username: 'L8D', password: 'somepassword', id: 123},
+   *   {username: 'D8I', password: 'otherpassword', id: 234},
+   *   {username: 'tj', password: 'whoknows', id: 345}
+   * ]);
+   * // => ['L8D', 'D8I', 'tj']
+   * @param {string} attr
+   * @param {Object[]} values
+   * @returns {Array}
+   * @method pluck
+   */
+  function pluck(attribute, values) {
+    return values.map(function(value) {
+      return value[attribute];
+    });
   }
 
   /**
@@ -669,7 +673,6 @@
   ku.eq = eq;
   ku.max = max;
   ku.min = min;
-  ku.pluck = curry(pluck);
   ku.push = curry(push);
   ku.attr = curry(attr);
   ku.zero = zero;
@@ -685,6 +688,7 @@
   ku.compo = curry(compo);
   ku.func = func;
   ku.map = curry(map);
+  ku.pluck = curry(pluck);
   ku.filter = curry(filter);
   ku.zipo = curry(zipo);
   ku.wrap = curry(wrap);
