@@ -311,8 +311,8 @@
    * @param {Object} value
    * @returns {*}
    */
-  function attr(attr, value) {
-    return value[attr];
+  function attr(attribute, value) {
+    return value[attribute];
   }
 
   /**
@@ -643,20 +643,47 @@
   }
 
   /**
+   * Takes any number of property names and returns a new function that will
+   * take an object and return the chained properties of that object.
+   *
+   * Currently there is no checking for undefined properties to perform
+   * semi-monadic behavior, so be careful when you use this.
+   *
+   * @memberof ku
+   * @example
+   * var click = $('#some-input').asEventStream('click');
+   *
+   * click.map(ku.attrs('target', 'value')).log();
+   * @param {...string} attributes
+   * @returns {function}
+   */
+  function attrs() {
+    var attributes = slice(arguments, 0);
+
+    return function(object) {
+      for (var i = 0; i < attributes.length; i++) {
+        object = object[attributes[i]];
+      }
+
+      return object;
+    };
+  }
+
+  /**
    * Takes an attribute and any number of arguments and returns a new
    * function that will take an object and apply the given arguments to that
    * object's attribute (method).
    *
    * @memberof ku
-   * @param {string} attr
+   * @param {string} attribute
    * @param {...*} args
    * @returns {function}
    */
-  function method(attr) {
+  function method(attribute) {
     var args = slice(arguments, 1);
 
     return function(object) {
-      return object[attr].apply(object, args);
+      return object[attribute].apply(object, args);
     };
   }
 
@@ -694,6 +721,7 @@
   ku.wrap = curry(wrap);
   ku.flip = curry(flip);
   ku.compose = curry(compose);
+  ku.attrs = attrs;
   ku.method = method;
 
   return ku;
