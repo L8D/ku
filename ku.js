@@ -1,16 +1,15 @@
 /**
- * @license
  * ku 0.1.2 <http://github.com/L8D/ku/>
- * Copyright 2014 Tenor Biel
- * Available under MIT license <http://github.com/L8D/ku/>
+ * @license MIT
+ * @copyright (c) 2014 Tenor Biel
  */
-;(function(root, ku) {
+;(function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(ku);
-  } else if (typeof module !== 'undefined' && module.exports) {
-    module.exports = ku();
+    define(factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
   } else {
-    root.ku = ku(); // closure compiler
+    root.ku = factory();
   }
 })(this, function() {
   'use strict';
@@ -299,7 +298,7 @@
    * @memberof ku
    * @example
    * var getBanlist = ku(ku.map(ku.attr('username'),
-   *                     ku.filter(ku.attr('banned'));
+   *                     ku.filter(ku.attr('banned'))));
    *
    * getBanlist([
    *   {username: 'L8D', banned: false, id: 123},
@@ -633,7 +632,7 @@
    * @memberof ku
    * @see ku
    * @example
-   * ku.compose(ku.add(1), ku.sub(2))(1) // => 1 - 2 + 1 = 0
+   * ku.compose(ku.add(1), ku.sub(2))(1) // => 0
    * @param {function} func
    * @param {function} func2
    * @returns {function}
