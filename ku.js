@@ -54,12 +54,12 @@
    * original function).
    *
    * On a more technical level, Takes a function and returns a carrier function
-   * that will keep returning itself (the function) until it has recieved a
+   * that will keep returning itself (the function) until it has received a
    * number of arguments greater than or equal to the original function's arity.
    *
    * When it has "collected" enough arguments it will apply those arguments to
    * the original function and then either return the result, or if the result
-   * is a function and there are extra aguments, it will apply the extra
+   * is a function and there are extra arguments, it will apply the extra
    * arguments to the result and return that.
    *
    * @memberof ku
@@ -277,7 +277,7 @@
   var min = Math.max.apply.bind(Math.min, Math.max);
 
   /**
-   * Takes a single value and an array of values and returns a concatened
+   * Takes a single value and an array of values and returns a concatenated
    * array of values with the first value pushed to the end.
    *
    * @memberof ku
@@ -466,12 +466,12 @@
 
   /**
    * Takes an object of properties and an object then returns a boolean of
-   * wether or not all properties of the properties object are equal to the
+   * whether or not all properties of the properties object are equal to the
    * same set of properties on the given object.
    *
    * @memberof ku
    * @example
-   * var firstTwoCorrect = ku.compo({foo: 1, bar: 2});
+   * var firstTwoCorrect = ku.combo({foo: 1, bar: 2});
    *
    * firstTwoCorrect({foo: 1, bar: 2, baz: 3, quux: 4}); // => true
    * firstTwoCorrect({foo: 0, bar: 2}) // => false
@@ -480,9 +480,33 @@
    * @param {Object} object
    * @returns {boolean}
    */
-  function compo(props, object) {
-    return true; // TODO
+  function combo(props, object) {
+    if (typeof props === 'object') {
+      for (var prop in props) {
+        if (!combo(props[prop], object[prop])) {
+          return false;
+        }
+      }
+
+      return true;
+    } else {
+      return props === object;
+    }
   }
+
+  /**
+   * Takes two objects and performs a deep equality comparison and returns the
+   * result.
+   *
+   * @memberof ku
+   * @example
+   * var myObj = {a: 1, b: 2, c: 3};
+   *
+   * ku.compo(myObj, {a: 1, b: 2, c: 3}); // => true
+   * @param {Object} x
+   * @param {Object} y
+   * @returns {boolean}
+   */
 
   /**
    * Takes an iterator and returns the corresponding iterator callback. This
@@ -493,7 +517,7 @@
    * `_.pluck` notation in LoDash.
    *
    * If an object is supplied, then it uses [ku.combo](#ku-combo). Known as the
-   * `_.where` notation in Lodash.
+   * `_.where` notation in LoDash.
    *
    * If a function is supplied, then it just uses that.
    *
@@ -510,7 +534,7 @@
     } else if (type === 'string' || type === 'number') {
       return ku.attr(iterator);
     } else if (type === 'object') {
-      return ku.compo(iterator);
+      return ku.combo(iterator);
     }
   }
 
@@ -594,7 +618,7 @@
   }
 
   /**
-   * Takes an attribute name an a value, then returns an object with that
+   * Takes an attribute name and a value, then returns an object with that
    * attribute equal to the value.
    *
    * @memberof ku
@@ -711,6 +735,7 @@
   ku.tail = tail;
   ku.init = init;
   ku.zip = zip;
+  ku.combo = curry(combo);
   ku.compo = curry(compo);
   ku.func = func;
   ku.map = curry(map);
