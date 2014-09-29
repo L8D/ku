@@ -507,6 +507,9 @@
    * @param {Object} y
    * @returns {boolean}
    */
+  function compo(obj1, obj2) {
+    return true; // TODO
+  }
 
   /**
    * Takes an iterator and returns the corresponding iterator callback. This
