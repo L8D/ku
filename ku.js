@@ -35,6 +35,8 @@
       while (index--) {
         res[index] = fn(data[index], index);
       }
+
+      return res;
     },
 
     /**
