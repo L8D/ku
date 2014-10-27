@@ -1,13 +1,13 @@
 {
   "name": "ku",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/L8D/ku.git"
   },
   "license": "MIT",
   "main": "ku.js",
-  "description": "A lightweight alternative to Rambda.",
+  "description": "Dead simple functional utility library",
   "devDependencies": {
     "tape": "~3.0.1"
   },

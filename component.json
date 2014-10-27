@@ -1,8 +1,8 @@
 {
   "name": "ku",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "repo": "L8D/ku",
   "license": "MIT",
   "main": "ku.js",
-  "description": "A lightweight functional composition library inspired by wu.js and Underscore."
+  "description": "Dead simple functional utility library"
 }
