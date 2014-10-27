@@ -9,10 +9,9 @@
   "main": "ku.js",
   "description": "A lightweight alternative to Rambda.",
   "devDependencies": {
-    "mocha": "~1.21.4",
-    "should": "~4.0.4"
+    "tape": "~3.0.1"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "node test/ku"
   }
 }
