@@ -14,8 +14,8 @@ describe('map', function() {
   });
 
   it('should map over an empty array', function() {
-    res = ku.map(function(x) {
-      return x * 3
+    var res = ku.map(function(x) {
+      return x * 3;
     }, []);
 
     assert.deepEqual(res, []);
