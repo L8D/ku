@@ -1,4 +1,5 @@
 'use strict';
+/* global describe, it */
 
 var assert = require('assert');
 var ku = require('../ku');
