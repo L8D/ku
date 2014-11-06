@@ -3,7 +3,8 @@
  * @license MIT
  * @copyright (c) 2014 Tenor Biel
  */
-; /* istanbul ignore next: UMD */
+/* global define, exports, module */
+/* istanbul ignore next */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define('ku', factory);
