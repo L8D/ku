@@ -9,9 +9,9 @@
   "main": "ku.js",
   "description": "Dead simple functional utility library",
   "devDependencies": {
-    "tape": "^3.0.1"
+    "mocha": "^2.0.1"
   },
   "scripts": {
-    "test": "tape test"
+    "test": "mocha"
   }
 }
