@@ -15,7 +15,7 @@
 })(this, function() {
   'use strict';
 
-  /** @namespace ku */
+  /** @exports ku */
   var ku = {
     /**
      * Creates an array of values by apply the function to each element in the
@@ -27,7 +27,6 @@
      * @param {function} fn - The function to iterate with
      * @param {array} data - The data to iterate over
      * @returns {array}
-     * @memberof ku
      */
     map: function map(fn, data) {
       var index = data.length;
@@ -50,7 +49,6 @@
      * @param {function} fn - The function to iterate with
      * @param {array} data - The data to iterate over
      * @returns {array}
-     * @memberof ku
      */
     filter: function filter(fn, data) {
       var index = -1;
@@ -80,7 +78,6 @@
      * @param {*} value - The initial accumulator value
      * @param {array} data - The data to aggregate over
      * @returns {*}
-     * @memberof ku
      */
     reduce: function reduce(fn, value, data) {
       var index = -1;
@@ -104,7 +101,6 @@
      * @param {*} value - The initial accumulator value
      * @param {array} data - The data to aggregate over
      * @returns {array}
-     * @memberof ku
      */
     scan: function scan(fn, value, data) {
       var index = -1;
@@ -130,7 +126,6 @@
      * @param {function} fn - The function to iterate with
      * @param {array} data - The data to iterate over
      * @returns {array}
-     * @memberof ku
      */
     chain: function chain(fn, data) {
       var index = -1;
