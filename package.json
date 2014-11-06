@@ -9,6 +9,7 @@
   "main": "ku.js",
   "description": "Dead simple functional utility library",
   "devDependencies": {
+    "jshint": "^2.5.10",
     "mocha": "^2.0.1"
   },
   "scripts": {
