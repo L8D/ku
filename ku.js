@@ -28,7 +28,7 @@
      * @param {array} data - The data to iterate over
      * @returns {array}
      */
-    map: function map(fn, data) {
+    map: function(fn, data) {
       var index = data.length;
       var res = new Array(index);
 
@@ -50,7 +50,7 @@
      * @param {array} data - The data to iterate over
      * @returns {array}
      */
-    filter: function filter(fn, data) {
+    filter: function(fn, data) {
       var index = -1;
       var length = data.length;
       var res = [];
@@ -79,7 +79,7 @@
      * @param {array} data - The data to aggregate over
      * @returns {*}
      */
-    reduce: function reduce(fn, value, data) {
+    reduce: function(fn, value, data) {
       var index = -1;
       var length = data.length;
 
@@ -102,7 +102,7 @@
      * @param {array} data - The data to aggregate over
      * @returns {array}
      */
-    scan: function scan(fn, value, data) {
+    scan: function(fn, value, data) {
       var index = -1;
       var length = data.length;
       var res = new Array(length + 1);
@@ -127,7 +127,7 @@
      * @param {array} data - The data to iterate over
      * @returns {array}
      */
-    chain: function chain(fn, data) {
+    chain: function(fn, data) {
       var index = -1;
       var length = data.length;
       var res = [];
