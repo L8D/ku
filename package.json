@@ -12,6 +12,7 @@
     "mocha": "^2.0.1"
   },
   "scripts": {
-    "test": "mocha"
+    "lint": "jshint .",
+    "test": "npm run lint && mocha"
   }
 }
