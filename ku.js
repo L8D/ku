@@ -76,7 +76,7 @@
      *
      * @example
      * ku.reduce(function(x, y) { return x + y; }, 0, [1, 2, 3]);
-     * // => (((0 + 1) + 2) + 3) => 6
+     * // => 6
      * @param {function} fn - The function to aggregate with
      * @param {*} value - The initial accumulator value
      * @param {array} data - The data to aggregate over
@@ -154,7 +154,7 @@
      * Takes the first `count` elements from an array.
      *
      * @example
-     * ku.take(5, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+     * ku.take(5, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
      * //=> [1, 2, 3, 4, 5]
      * @param {number} count
      * @param {array} data
