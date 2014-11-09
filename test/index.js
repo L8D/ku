@@ -73,6 +73,28 @@ describe('chain', function(it) {
   });
 });
 
+describe('slice', function(it) {
+  it('should slice over an empty array', function(assert) {
+    var res = ku.slice(1, []);
+
+    assert.same(res, []);
+  });
+
+  it('should slice into a populated array', function(assert) {
+    var res = ku.slice(3, [1, 2, 3, 4, 5, 6]);
+
+    assert.same(res, [4, 5, 6]);
+  });
+
+  it('should slice array-like objects', function(assert) {
+    var res = (function() {
+      return ku.slice(2, arguments);
+    })(1, 2, 3, 4, 5);
+
+    assert.same(res, [3, 4, 5]);
+  });
+});
+
 function isEven(x) {
   return x % 2 === 0;
 }
