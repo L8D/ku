@@ -151,22 +151,22 @@
     },
 
     /**
-     * Slices an array at `offset`.
+     * Drops the first `count` elements from an array.
      *
      * @example
-     * var args = ku.slice(0, arguments);
-     * @param {number} offset
+     * var args = ku.drop(0, arguments);
+     * @param {number} count
      * @param {array} data
      * @returns {array}
      */
-    slice: function(offset, data) {
+    drop: function(count, data) {
       var length = data.length;
-      var index = Math.min(length, offset);
+      var index = Math.min(length, count);
       var res = new Array(length - index);
       index--;
 
       while (++index < length) {
-        res[index - offset] = data[index];
+        res[index - count] = data[index];
       }
 
       return res;
