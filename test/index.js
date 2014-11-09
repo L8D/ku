@@ -7,13 +7,13 @@ describe('map', function(it) {
   it('should map over a populated array', function(assert) {
     var res = ku.map(timesThree, [1, 2, 3]);
 
-    assert.deepEqual(res, [3, 6, 9]);
+    assert.same(res, [3, 6, 9]);
   });
 
   it('should map over an empty array', function(assert) {
     var res = ku.map(timesThree, []);
 
-    assert.deepEqual(res, []);
+    assert.same(res, []);
   });
 });
 
@@ -21,13 +21,13 @@ describe('filter', function(it) {
   it('should filter elements from a populated array', function(assert) {
     var res = ku.filter(isEven, [1, 2, 3, 4, 5, 6]);
 
-    assert.deepEqual(res, [2, 4, 6]);
+    assert.same(res, [2, 4, 6]);
   });
 
   it('should filter elements from an empty', function(assert) {
     var res = ku.filter(isEven, []);
 
-    assert.deepEqual(res, []);
+    assert.same(res, []);
   });
 });
 
@@ -49,13 +49,13 @@ describe('scan', function(it) {
   it('should aggregate values from a populated array', function(assert) {
     var res = ku.scan(sum, 0, [1, 2, 3]);
 
-    assert.deepEqual(res, [0, 1, 3, 6]);
+    assert.same(res, [0, 1, 3, 6]);
   });
 
   it('should aggregate a single value from an empty array', function(assert) {
     var res = ku.scan(sum, 0, []);
 
-    assert.deepEqual(res, [0]);
+    assert.same(res, [0]);
   });
 });
 
@@ -63,13 +63,13 @@ describe('chain', function(it) {
   it('should bind over a populated array', function(assert) {
     var res = ku.chain(upTo, [1, 2, 3]);
 
-    assert.deepEqual(res, [0, 1, 0, 1, 2, 0, 1, 2, 3]);
+    assert.same(res, [0, 1, 0, 1, 2, 0, 1, 2, 3]);
   });
 
   it('should bind over an empty array', function(assert) {
     var res = ku.chain(upTo, []);
 
-    assert.deepEqual(res, []);
+    assert.same(res, []);
   });
 });
 
