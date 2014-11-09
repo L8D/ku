@@ -1,0 +1,5 @@
+.git*
+.jshint*
+.travis.yml
+*.json
+test/
