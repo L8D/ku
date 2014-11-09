@@ -18,6 +18,11 @@
 })(this, function() {
   'use strict';
 
+  /**
+   * @exampleHelpers
+   * function add(x, y) { return x + y; }
+   */
+
   /** @exports ku */
   var ku = {
     /**
@@ -26,7 +31,7 @@
      *
      * @example
      * ku.map(function(num) { return num * 3}, [1, 2, 3]);
-     * //=> [3, 6, 9]
+     * // => [3, 6, 9]
      * @param {function} fn - The function to iterate with
      * @param {array} data - The data to iterate over
      * @returns {array}
@@ -48,7 +53,7 @@
      *
      * @example
      * ku.filter(function(num) { return num % 2 === 0; }, [1, 2, 3, 4, 5, 6]);
-     * //=> [2, 4, 6]
+     * // => [2, 4, 6]
      * @param {function} fn - The function to iterate with
      * @param {array} data - The data to iterate over
      * @returns {array}
@@ -75,8 +80,12 @@
      * resulting value.
      *
      * @example
-     * ku.reduce(function(x, y) { return x + y; }, 0, [1, 2, 3]);
-     * // => 6
+     * ku.reduce(add, '', ['foo', 'bar', 'baz']);
+     * // => (('' + 'foo') + 'bar') + 'baz'
+     * // => 'foobarbaz'
+     * @example
+     * ku.reduce(add, 'some value', []);
+     * // => 'some value'
      * @param {function} fn - The function to aggregate with
      * @param {*} value - The initial accumulator value
      * @param {array} data - The data to aggregate over
@@ -98,8 +107,11 @@
      * accumulation.
      *
      * @example
-     * ku.scan(function(x, y) { return x + y; }, 0, [1, 2, 3]);
+     * ku.scan(add, 0, [1, 2, 3]);
      * // => [0, 1, 3, 6]
+     * @example
+     * ku.scan(add, 0, []);
+     * // => [0]
      * @param {function} fn - The function to aggregate with
      * @param {*} value - The initial accumulator value
      * @param {array} data - The data to aggregate over
@@ -125,7 +137,10 @@
      *
      * @example
      * ku.chain(function(x) { return [x, x + 1, x + 2]; }, [1, 2, 3]);
-     * //=> [1, 2, 3, 2, 3, 4, 3, 4, 5]
+     * // => [1, 2, 3, 2, 3, 4, 3, 4, 5]
+     * @example
+     * ku.chain(function(x) { return [[x]]; }, [1, 2, 3]);
+     * // => [[1], [2], [3]]
      * @param {function} fn - The function to iterate with
      * @param {array} data - The data to iterate over
      * @returns {array}
@@ -202,7 +217,10 @@
      *
      * @example
      * ku.slice(2, 5, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-     * //=> [3, 4, 5]
+     * // => [3, 4, 5]
+     * @example
+     * ku.slice(2, 5, []);
+     * // => []
      * @param {number} x
      * @param {number} y
      * @param {array} data
@@ -217,6 +235,35 @@
 
       while (++index < y) {
         res[index - x] = data[index];
+      }
+
+      return res;
+    },
+
+    /**
+     * Uses `fn` to zip two arrays into one new array.
+     *
+     * Due to performance implications and idiomaticism, zip is actually
+     * zipWith because JavaScript doesn't have a standard for tuple-like
+     * data structures.
+     *
+     * @example
+     * ku.zip(add, [1, 2, 3], [4, 5, 6]);
+     * // => [1 + 4, 2 + 5, 3 + 6]
+     * @example
+     * ku.zip(add, [], [1, 2, 3, 4]); // => []
+     * ku.zip(add, [1, 2, 3, 4], []); // => []
+     * @param {function} fn
+     * @param {array} left
+     * @param {array} right
+     * @returns {array}
+     */
+    zip: function(fn, left, right) {
+      var index = Math.min(left.length, right.length);
+      var res = new Array(index);
+
+      while (index--) {
+        res[index] = fn(left[index], right[index]);
       }
 
       return res;
