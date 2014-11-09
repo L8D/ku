@@ -148,6 +148,28 @@
       }
 
       return res;
+    },
+
+    /**
+     * Slices an array at `offset`.
+     *
+     * @example
+     * var args = ku.slice(0, arguments);
+     * @param {number} offset
+     * @param {array} data
+     * @returns {array}
+     */
+    slice: function(offset, data) {
+      var length = data.length;
+      var index = Math.min(length, offset);
+      var res = new Array(length - index);
+      index--;
+
+      while (++index < length) {
+        res[index - offset] = data[index];
+      }
+
+      return res;
     }
   };
 
