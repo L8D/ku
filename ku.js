@@ -151,6 +151,28 @@
     },
 
     /**
+     * Takes the first `count` elements from an array.
+     *
+     * @example
+     * ku.take(5, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+     * //=> [1, 2, 3, 4, 5]
+     * @param {number} count
+     * @param {array} data
+     * @returns {array}
+     */
+    take: function(count, data) {
+      var length = data.length;
+      var index = Math.min(length, count);
+      var res = new Array(length - index);
+
+      while (index--) {
+        res[index] = data[index];
+      }
+
+      return res;
+    },
+
+    /**
      * Drops the first `count` elements from an array.
      *
      * @example
