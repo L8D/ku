@@ -195,6 +195,31 @@
       }
 
       return res;
+    },
+
+    /**
+     * Slices an array at indecies `x` and `y`.
+     *
+     * @example
+     * ku.slice(2, 5, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+     * //=> [3, 4, 5]
+     * @param {number} x
+     * @param {number} y
+     * @param {array} data
+     * @returns {array}
+     */
+    slice: function(x, y, data) {
+      var length = data.length;
+      var index = Math.min(x, length);
+      y = Math.min(y, length);
+      var res = new Array(y - index);
+      index--;
+
+      while (++index < y) {
+        res[index - x] = data[index];
+      }
+
+      return res;
     }
   };
 
