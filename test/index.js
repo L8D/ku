@@ -73,6 +73,26 @@ describe('chain', function(it) {
   });
 });
 
+describe('take', function(it) {
+  it('should take elements over an empty array', function(assert) {
+    var res = ku.take(1, []);
+
+    assert.same(res, []);
+  });
+
+  it('should take elements from a populated array', function(assert) {
+    var res = ku.take(3, [1, 2, 3, 4, 5, 6]);
+
+    assert.same(res, [1, 2, 3]);
+  });
+
+  it('should take elements over a populated array', function(assert) {
+    var res = ku.take(10, [1, 2, 3]);
+
+    assert.same(res, [1, 2, 3]);
+  });
+});
+
 describe('drop', function(it) {
   it('should drop elements over an empty array', function(assert) {
     var res = ku.drop(1, []);
