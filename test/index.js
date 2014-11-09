@@ -115,6 +115,20 @@ describe('drop', function(it) {
   });
 });
 
+describe('slice', function(it) {
+  it('should slice over an empty array', function(assert) {
+    var res = ku.slice(1, 2, []);
+
+    assert.same(res, []);
+  });
+
+  it('should slice into a populated array', function(assert) {
+    var res = ku.slice(2, 5, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+
+    assert.same(res, [3, 4, 5]);
+  });
+});
+
 function isEven(x) {
   return x % 2 === 0;
 }
