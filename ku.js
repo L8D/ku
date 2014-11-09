@@ -154,7 +154,10 @@
      * Drops the first `count` elements from an array.
      *
      * @example
-     * var args = ku.drop(0, arguments);
+     * (function() {
+     *   return ku.drop(0, arguments);
+     * })(1, 2, 3, 4);
+     * //=> [1, 2, 3, 4]
      * @param {number} count
      * @param {array} data
      * @returns {array}
