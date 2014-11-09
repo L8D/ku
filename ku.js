@@ -1,5 +1,5 @@
 /**
- * ku 0.2.0 <http://github.com/L8D/ku/>
+ * ku 0.3.0-dev <http://github.com/L8D/ku/>
  * @license MIT
  * @copyright (c) 2014 Tenor Biel
  */
