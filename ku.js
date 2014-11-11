@@ -301,7 +301,7 @@
      *
      * @example
      * ku.scanRight(add, 0, [1, 2, 3]);
-     * // => [0, 1, 3, 6]
+     * // => [0, 3, 5, 6]
      * @example
      * ku.scanRight(add, 0, []);
      * // => [0]
@@ -315,7 +315,7 @@
      */
     scanRight: function(fn, value, data) {
       var index = data.length;
-      var res = new Array(length + 1);
+      var res = new Array(index + 1);
       var rindex = 0;
 
       res[0] = value;
