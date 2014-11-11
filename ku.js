@@ -294,6 +294,38 @@
 
       return value;
     },
+
+    /**
+     * Aggregates over a collection from right to left and returns an array of
+     * each intermittent accumulation.
+     *
+     * @example
+     * ku.scanRight(add, 0, [1, 2, 3]);
+     * // => [0, 1, 3, 6]
+     * @example
+     * ku.scanRight(add, 0, []);
+     * // => [0]
+     * @example
+     * ku.scanRight(add, '', ['foo', 'bar', 'baz']);
+     * // => ['', 'baz', 'bazbar', 'bazbarfoo']
+     * @param {function} fn - The function to aggregate with
+     * @param {*} value - The initial accumulator value
+     * @param {array} data - The data to aggregate over
+     * @returns {array}
+     */
+    scanRight: function(fn, value, data) {
+      var index = data.length;
+      var res = new Array(length + 1);
+      var rindex = 0;
+
+      res[0] = value;
+
+      while (index--) {
+        value = res[++rindex] = fn(value, data[index]);
+      }
+
+      return res;
+    },
   };
 
   return ku;
