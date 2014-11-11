@@ -267,7 +267,33 @@
       }
 
       return res;
-    }
+    },
+
+    /**
+     * Aggregates over a collection from right to left starting with a value
+     * and returning the resulting value.
+     *
+     * @example
+     * ku.reduceRight(add, '', ['foo', 'bar', 'baz']);
+     * // => (('' + 'baz') + 'bar') + 'foo'
+     * // => 'bazbarfoo'
+     * @example
+     * ku.reduceRight(add, 'some value', []);
+     * // => 'some value'
+     * @param {function} fn - The function to aggregate with
+     * @param {*} value - The initial accumulator value
+     * @param {array} data - The data to aggregate over
+     * @returns {*}
+     */
+    reduceRight: function(fn, value, data) {
+      var index = data.length;
+
+      while (index--) {
+        value = fn(value, data[index]);
+      }
+
+      return value;
+    },
   };
 
   return ku;
