@@ -30,7 +30,7 @@
      * collection.
      *
      * @example
-     * ku.map(function(num) { return num * 3}, [1, 2, 3]);
+     * ku.map(function(num) { return num * 3 }, [1, 2, 3]);
      * // => [3, 6, 9]
      * @param {function} fn - The function to iterate with
      * @param {array} data - The data to iterate over
